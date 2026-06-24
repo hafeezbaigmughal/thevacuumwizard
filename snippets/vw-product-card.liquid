@@ -1,0 +1,29 @@
+{%- liquid
+  assign fallback_image = fallback_image | default: 'vacuum-wizard-product-a.png'
+  assign fallback_title = fallback_title | default: 'Dyson V10 Genuine Battery Power Pack'
+  assign fallback_price = fallback_price | default: '&pound; 89.99'
+  assign product_alt = product.featured_image.alt | default: product.title
+  assign product_link = product.url | default: '#'
+-%}
+
+<article class="product-card">
+  <a class="product-card__media" href="{{ product_link }}">
+    {% if product != blank and product.featured_image %}
+      {{ product.featured_image | image_url: width: 520 | image_tag: loading: 'lazy', alt: product_alt }}
+    {% else %}
+      <img src="{{ fallback_image | asset_url }}" alt="{{ fallback_title | escape }}" loading="lazy">
+    {% endif %}
+    <span class="product-card__badge" aria-hidden="true">+</span>
+  </a>
+  <div class="product-card__body">
+    <h3><a href="{{ product_link }}">{{ product.title | default: fallback_title }}</a></h3>
+    <div class="product-card__price">
+      {% if product != blank %}
+        {{ product.price | money }}
+      {% else %}
+        {{ fallback_price }}
+      {% endif %}
+    </div>
+    <button class="product-card__cart" type="button" aria-label="Add to cart">+</button>
+  </div>
+</article>

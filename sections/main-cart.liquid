@@ -1,0 +1,34 @@
+<section class="page-width template-section cart-page">
+  <h1>Your Cart</h1>
+  {% if cart.item_count > 0 %}
+    <form action="{{ routes.cart_url }}" method="post">
+      {% for item in cart.items %}
+        <div class="cart-line">
+          <a href="{{ item.url }}">{{ item.image | image_url: width: 120 | image_tag: loading: 'lazy', alt: item.product.title }}</a>
+          <div>
+            <h2>{{ item.product.title }}</h2>
+            <p>{{ item.final_line_price | money }}</p>
+            <label>
+              Qty
+              <input type="number" name="updates[]" value="{{ item.quantity }}" min="0">
+            </label>
+          </div>
+        </div>
+      {% endfor %}
+      <div class="cart-summary">
+        <strong>Total: {{ cart.total_price | money }}</strong>
+        <button class="button button--outline" type="submit" name="update">Update</button>
+        <button class="button button--red" type="submit" name="checkout">Checkout</button>
+      </div>
+    </form>
+  {% else %}
+    <p>Your cart is currently empty.</p>
+    <a class="button button--red" href="{{ routes.all_products_collection_url }}">Continue Shopping</a>
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "Main cart"
+}
+{% endschema %}

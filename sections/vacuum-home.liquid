@@ -1,0 +1,421 @@
+{%- liquid
+  assign shop_link = section.settings.shop_link | default: routes.all_products_collection_url
+  assign contact_link = section.settings.contact_link | default: '/pages/contact'
+  assign about_link = section.settings.about_link | default: '/pages/about-us'
+  assign reviews_link = section.settings.reviews_link | default: '/pages/reviews'
+
+  assign best_sellers_collection = section.settings.best_sellers_collection
+  if best_sellers_collection == blank
+    assign best_sellers_collection = collections['best-sellers']
+  endif
+  if best_sellers_collection == blank
+    assign best_sellers_collection = collections['frontpage']
+  endif
+  if best_sellers_collection == blank
+    assign best_sellers_collection = collections['all']
+  endif
+
+  assign featured_collection = section.settings.featured_collection
+  if featured_collection == blank
+    assign featured_collection = collections['all']
+  endif
+
+  assign related_collection = section.settings.related_collection
+  if related_collection == blank
+    assign related_collection = best_sellers_collection
+  endif
+
+  assign best_sellers_limit = section.settings.best_sellers_limit | default: 6
+  assign featured_limit = section.settings.featured_limit | default: 8
+  assign related_limit = section.settings.related_limit | default: 4
+-%}
+
+<section class="hero-shot" aria-label="{{ section.settings.hero_label | escape }}">
+  <div class="page-width hero-shot__links">
+    <a class="hero-shot__hotspot hero-shot__hotspot--shop" href="{{ shop_link }}" aria-label="Shop now"></a>
+    <a class="hero-shot__hotspot hero-shot__hotspot--call" href="tel:{{ section.settings.phone | remove: ' ' }}" aria-label="Call us now"></a>
+  </div>
+</section>
+
+<section class="model-section">
+  <div class="page-width">
+    <h2>Choose Your Model Below For Spare Parts <span>Or Complete Machines</span></h2>
+    <div class="section-line"></div>
+    <div class="model-grid">
+      {% assign model_fallbacks = 'vacuum-wizard-model-v6.png|vacuum-wizard-model-v7.png|vacuum-wizard-model-v8.png|vacuum-wizard-model-v10.png|vacuum-wizard-model-v11.png' | split: '|' %}
+      {% assign model_index = 0 %}
+      {% for block in section.blocks %}
+        {% if block.type == 'model' %}
+          {% assign fallback = model_fallbacks[model_index] | default: 'vacuum-wizard-model-v6.png' %}
+          <a class="model-tile" href="{{ block.settings.link | default: routes.all_products_collection_url }}" {{ block.shopify_attributes }}>
+            {% if block.settings.image != blank %}
+              {{ block.settings.image | image_url: width: 260 | image_tag: loading: 'lazy', alt: block.settings.title }}
+            {% else %}
+              <img src="{{ fallback | asset_url }}" alt="{{ block.settings.title | escape }}" loading="lazy">
+            {% endif %}
+            <strong>{{ block.settings.title }}</strong>
+          </a>
+          {% assign model_index = model_index | plus: 1 %}
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="why-section">
+  <div class="page-width">
+    <h2>Why <span>Choose Us</span></h2>
+    <div class="benefit-row">
+      <div>
+        <span>UK</span>
+        <strong>Express UK Delivery</strong>
+        <p>On all orders only &pound;4.99</p>
+      </div>
+      <div>
+        <span>+</span>
+        <strong>Large stock</strong>
+        <p>of Dyson Hand Held Vacuum Parts</p>
+      </div>
+      <div>
+        <span>24</span>
+        <strong>Next Business Day Delivery</strong>
+        <p>On all UK orders placed before 2pm</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="about-band">
+  <div class="page-width about-grid">
+    <div class="about-copy">
+      <h2>{{ section.settings.about_heading }}</h2>
+      <div class="rte">{{ section.settings.about_text }}</div>
+      <a class="button button--red" href="{{ about_link }}">About Us</a>
+    </div>
+    <div class="about-image">
+      {% if section.settings.about_image != blank %}
+        {{ section.settings.about_image | image_url: width: 620 | image_tag: loading: 'lazy', alt: section.settings.about_heading }}
+      {% else %}
+        <img src="{{ 'vacuum-wizard-about.png' | asset_url }}" alt="Dyson vacuum in a home" loading="lazy">
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="products-section">
+  <div class="page-width">
+    <h2>Best <span>Sellers</span></h2>
+    <div class="product-grid product-grid--best">
+      {% if best_sellers_collection != blank and best_sellers_collection.products.size > 0 %}
+        {% for product in best_sellers_collection.products limit: best_sellers_limit %}
+          {% render 'vw-product-card', product: product %}
+        {% endfor %}
+      {% else %}
+        {% assign manual_best_count = 0 %}
+        {% for block in section.blocks %}
+          {% if block.type == 'best_product' and block.settings.product != blank %}
+            {% assign manual_best_count = manual_best_count | plus: 1 %}
+            {% render 'vw-product-card', product: block.settings.product %}
+          {% endif %}
+        {% endfor %}
+        {% if manual_best_count == 0 %}
+          <p class="section-empty">Select a Best Sellers collection in the theme editor.</p>
+        {% endif %}
+      {% endif %}
+    </div>
+
+    <div class="tabs-row">
+      <button class="tab is-active" type="button">Featured Products</button>
+      <button class="tab" type="button">Latest Products</button>
+      <button class="tab" type="button">Vacuum Products</button>
+    </div>
+    <div class="product-grid">
+      {% if featured_collection != blank and featured_collection.products.size > 0 %}
+        {% for product in featured_collection.products limit: featured_limit %}
+          {% render 'vw-product-card', product: product %}
+        {% endfor %}
+      {% else %}
+        {% assign manual_featured_count = 0 %}
+        {% for block in section.blocks %}
+          {% if block.type == 'featured_product' and block.settings.product != blank %}
+            {% assign manual_featured_count = manual_featured_count | plus: 1 %}
+            {% render 'vw-product-card', product: block.settings.product %}
+          {% endif %}
+        {% endfor %}
+        {% if manual_featured_count == 0 %}
+          <p class="section-empty">Select a Featured Products collection in the theme editor.</p>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="shipping-banner">
+  <div class="page-width shipping-banner__links">
+    <a href="{{ shop_link }}" aria-label="Shop now"></a>
+    <a href="{{ contact_link }}" aria-label="Contact us"></a>
+  </div>
+</section>
+
+<section class="related-section">
+  <div class="page-width">
+    <h2>Related <span>Products</span></h2>
+    <div class="product-grid product-grid--related">
+      {% if related_collection != blank and related_collection.products.size > 0 %}
+        {% for product in related_collection.products limit: related_limit %}
+          {% render 'vw-product-card', product: product %}
+        {% endfor %}
+      {% else %}
+        {% assign manual_related_count = 0 %}
+        {% for block in section.blocks %}
+          {% if block.type == 'related_product' and block.settings.product != blank %}
+            {% assign manual_related_count = manual_related_count | plus: 1 %}
+            {% render 'vw-product-card', product: block.settings.product %}
+          {% endif %}
+        {% endfor %}
+        {% if manual_related_count == 0 %}
+          <p class="section-empty">Select a Related Products collection in the theme editor.</p>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="reviews-section">
+  <div class="page-width">
+    <h2>Latest Reviews</h2>
+    <div class="review-box">
+      <strong>Trustindex</strong>
+      <p>Trustindex verifies that the original source of the review is Google.</p>
+    </div>
+    <a class="button button--outline" href="{{ reviews_link }}">View More</a>
+  </div>
+</section>
+
+<section class="blogs-section">
+  <div class="page-width">
+    <h2>Blogs</h2>
+    <div class="blog-grid">
+      {% assign blog_images = 'vacuum-wizard-blog-1.png|vacuum-wizard-blog-2.png|vacuum-wizard-blog-3.png' | split: '|' %}
+      {% assign blog_titles = 'How to Replace Dyson V7 Battery?|Dyson V7 Troubleshooting: Common Issues and Solutions|How to Replace Dyson V6 Battery?' | split: '|' %}
+      {% assign selected_blog = section.settings.blog %}
+      {% for article in selected_blog.articles limit: 3 %}
+        {% assign image = blog_images[forloop.index0] | default: 'vacuum-wizard-blog-1.png' %}
+        {% assign title = blog_titles[forloop.index0] | default: 'Dyson repair guide' %}
+        {% render 'vw-blog-card', article: article, fallback_image: image, fallback_title: title %}
+      {% else %}
+        {% for image in blog_images %}
+          {% assign title = blog_titles[forloop.index0] %}
+          {% render 'vw-blog-card', fallback_image: image, fallback_title: title %}
+        {% endfor %}
+      {% endfor %}
+    </div>
+    <a class="button button--outline" href="{{ selected_blog.url | default: '/blogs/news' }}">View More</a>
+  </div>
+</section>
+
+<section class="seo-copy">
+  <div class="page-width">
+    <h2>{{ section.settings.seo_heading_1 }}</h2>
+    <div class="rte">{{ section.settings.seo_text_1 }}</div>
+    <h2>{{ section.settings.seo_heading_2 }}</h2>
+    <div class="rte">{{ section.settings.seo_text_2 }}</div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Vacuum Wizard homepage",
+  "settings": [
+    {
+      "type": "text",
+      "id": "hero_label",
+      "label": "Hero accessibility label",
+      "default": "The independent Dyson hand held vacuum specialists"
+    },
+    {
+      "type": "url",
+      "id": "shop_link",
+      "label": "Shop link"
+    },
+    {
+      "type": "url",
+      "id": "contact_link",
+      "label": "Contact link"
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "Phone",
+      "default": "03333 701 701"
+    },
+    {
+      "type": "text",
+      "id": "about_heading",
+      "label": "About heading",
+      "default": "The Vacuum Wizard - Dyson Vacuum Spare Parts Online Store"
+    },
+    {
+      "type": "richtext",
+      "id": "about_text",
+      "label": "About text",
+      "default": "<p>The Vacuum Wizard are independent specialists in Dyson hand held vacuum cleaners and spare parts. Our online store carries batteries, chargers, motors, filters and accessories for popular Dyson models.</p><p>We stock carefully selected parts and provide quick UK delivery for customers who want dependable repair solutions.</p>"
+    },
+    {
+      "type": "url",
+      "id": "about_link",
+      "label": "About link"
+    },
+    {
+      "type": "image_picker",
+      "id": "about_image",
+      "label": "About image"
+    },
+    {
+      "type": "collection",
+      "id": "best_sellers_collection",
+      "label": "Best Sellers collection"
+    },
+    {
+      "type": "range",
+      "id": "best_sellers_limit",
+      "label": "Best Sellers products to show",
+      "min": 3,
+      "max": 12,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "collection",
+      "id": "featured_collection",
+      "label": "Featured Products collection"
+    },
+    {
+      "type": "range",
+      "id": "featured_limit",
+      "label": "Featured Products to show",
+      "min": 4,
+      "max": 16,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "collection",
+      "id": "related_collection",
+      "label": "Related Products collection"
+    },
+    {
+      "type": "range",
+      "id": "related_limit",
+      "label": "Related Products to show",
+      "min": 3,
+      "max": 8,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "url",
+      "id": "reviews_link",
+      "label": "Reviews link"
+    },
+    {
+      "type": "blog",
+      "id": "blog",
+      "label": "Blog"
+    },
+    {
+      "type": "text",
+      "id": "seo_heading_1",
+      "label": "SEO heading one",
+      "default": "Dyson Cordless Vacuum Accessories Online"
+    },
+    {
+      "type": "richtext",
+      "id": "seo_text_1",
+      "label": "SEO text one",
+      "default": "<p>Dyson cordless vacuum accessories are available online for customers who need reliable replacement parts, batteries, chargers and tools for home cleaning.</p>"
+    },
+    {
+      "type": "text",
+      "id": "seo_heading_2",
+      "label": "SEO heading two",
+      "default": "Dyson Handheld Parts For Sale Online"
+    },
+    {
+      "type": "richtext",
+      "id": "seo_text_2",
+      "label": "SEO text two",
+      "default": "<p>The Vacuum Wizard supplies Dyson handheld spare parts for several popular cordless models, helping customers keep their machines working for longer.</p>"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "model",
+      "name": "Dyson model",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Dyson V6"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    },
+    {
+      "type": "best_product",
+      "name": "Best seller product",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        }
+      ]
+    },
+    {
+      "type": "featured_product",
+      "name": "Featured product",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        }
+      ]
+    },
+    {
+      "type": "related_product",
+      "name": "Related product",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Vacuum Wizard homepage",
+      "blocks": [
+        { "type": "model", "settings": { "title": "Dyson V6" } },
+        { "type": "model", "settings": { "title": "Dyson V7" } },
+        { "type": "model", "settings": { "title": "Dyson V8" } },
+        { "type": "model", "settings": { "title": "Dyson V10" } },
+        { "type": "model", "settings": { "title": "Dyson V11" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

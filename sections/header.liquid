@@ -1,0 +1,68 @@
+<header class="site-header" data-section-id="{{ section.id }}">
+  <div class="top-strip">
+    <div class="page-width top-strip__inner">
+      <span class="top-strip__phone">☎ {{ section.settings.phone }}</span>
+      <nav class="top-strip__links" aria-label="Customer links">
+        <a href="{{ routes.account_login_url }}">Log in</a>
+        <a href="{{ routes.account_register_url }}">Register</a>
+        <a href="/pages/wishlist">Wishlist</a>
+        <a href="{{ routes.cart_url }}">Cart {{ cart.item_count }}</a>
+      </nav>
+    </div>
+  </div>
+
+  <div class="page-width header-main">
+    <a class="header-logo" href="{{ routes.root_url }}" aria-label="{{ shop.name }}">
+      {% if section.settings.logo != blank %}
+        {{ section.settings.logo | image_url: width: 260 | image_tag: loading: 'eager', alt: shop.name }}
+      {% else %}
+        <img src="{{ 'vacuum-wp-logo.png' | asset_url }}" alt="The Vacuum Wizard">
+      {% endif %}
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="HeaderMenu">
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav id="HeaderMenu" class="header-nav" aria-label="Main navigation">
+      {% if section.settings.menu != blank and linklists[section.settings.menu].links.size > 0 %}
+        {% for link in linklists[section.settings.menu].links %}
+          <a href="{{ link.url }}" class="{% if link.active %}is-active{% endif %}">{{ link.title }}</a>
+        {% endfor %}
+      {% else %}
+        <a class="is-active" href="{{ routes.root_url }}">Home</a>
+        <a href="{{ routes.all_products_collection_url }}">Products</a>
+        <a href="/pages/services">Services</a>
+        <a href="/pages/about-us">About Us</a>
+        <a href="/blogs/news">Blog</a>
+        <a href="/pages/contact">Contact Us</a>
+      {% endif %}
+      <a class="header-search" href="{{ routes.search_url }}" aria-label="Search">⌕</a>
+    </nav>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Main menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "Phone number",
+      "default": "03333 701 701"
+    }
+  ]
+}
+{% endschema %}

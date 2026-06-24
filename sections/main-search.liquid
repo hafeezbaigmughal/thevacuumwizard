@@ -1,0 +1,37 @@
+<section class="page-width template-section">
+  <header class="template-heading">
+    <h1>Search</h1>
+    <form action="{{ routes.search_url }}" method="get" role="search" class="search-form">
+      <input type="search" name="q" value="{{ search.terms | escape }}" placeholder="Search products">
+      <button class="button button--red" type="submit">Search</button>
+    </form>
+  </header>
+
+  {% if search.performed %}
+    <div class="product-grid">
+      {% paginate search.results by 24 %}
+        {% for item in search.results %}
+          {% if item.object_type == 'product' %}
+            {% render 'vw-product-card', product: item %}
+          {% else %}
+            <article class="simple-result">
+              <h2><a href="{{ item.url }}">{{ item.title }}</a></h2>
+              <p>{{ item.content | strip_html | truncate: 140 }}</p>
+            </article>
+          {% endif %}
+        {% else %}
+          <p>No results found.</p>
+        {% endfor %}
+        {% if paginate.pages > 1 %}
+          <nav class="pagination" role="navigation">{{ paginate | default_pagination }}</nav>
+        {% endif %}
+      {% endpaginate %}
+    </div>
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "Main search"
+}
+{% endschema %}

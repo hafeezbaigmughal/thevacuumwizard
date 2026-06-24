@@ -1,0 +1,22 @@
+{%- liquid
+  assign meta_title = page_title
+  if current_tags
+    assign meta_title = meta_title | append: ' - ' | append: current_tags | join: ', '
+  endif
+  if current_page != 1
+    assign meta_title = meta_title | append: ' - Page ' | append: current_page
+  endif
+-%}
+<title>{{ meta_title | escape }}</title>
+{% if page_description %}
+  <meta name="description" content="{{ page_description | escape }}">
+{% endif %}
+<link rel="canonical" href="{{ canonical_url }}">
+<meta property="og:site_name" content="{{ shop.name | escape }}">
+<meta property="og:url" content="{{ canonical_url }}">
+<meta property="og:title" content="{{ meta_title | escape }}">
+<meta property="og:type" content="website">
+{% if page_description %}
+  <meta property="og:description" content="{{ page_description | escape }}">
+{% endif %}
+<meta name="twitter:card" content="summary_large_image">

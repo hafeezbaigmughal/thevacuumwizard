@@ -1,0 +1,83 @@
+<footer class="site-footer">
+  <div class="footer-red">
+    <div class="page-width footer-grid">
+      <div class="footer-brand">
+        <img src="{{ 'vacuum-wp-footer-award.png' | asset_url }}" alt="The Vacuum Wizard">
+        <p>Dyson and the Dyson logo are trademarks of Dyson Technology Limited.</p>
+        <div class="payments">
+          <img src="{{ 'vacuum-wp-payment-logos.png' | asset_url }}" alt="Accepted payment methods">
+        </div>
+      </div>
+
+      <div>
+        <h2>Useful Links</h2>
+        <ul>
+          {% if section.settings.footer_menu != blank and linklists[section.settings.footer_menu].links.size > 0 %}
+            {% for link in linklists[section.settings.footer_menu].links %}
+              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+            {% endfor %}
+          {% else %}
+            <li><a href="/">Home</a></li>
+            <li><a href="/pages/about-us">About Us</a></li>
+            <li><a href="/pages/spares-and-repairs">Dyson Repairs and Servicing</a></li>
+            <li><a href="/policies/refund-policy">Refund Policy</a></li>
+            <li><a href="/pages/contact">Contact Us</a></li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <div>
+        <h2>Get in Touch</h2>
+        <p>{{ section.settings.address }}</p>
+        <p>{{ section.settings.phone }}</p>
+        <p><a href="mailto:{{ section.settings.email }}">{{ section.settings.email }}</a></p>
+        <div class="social-row">
+          <a href="#" aria-label="Facebook">f</a>
+          <a href="#" aria-label="Instagram">◎</a>
+          <a href="#" aria-label="YouTube">▶</a>
+          <a href="#" aria-label="X">x</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-black">
+    <div class="page-width footer-bottom">
+      <span>Terms of Use</span>
+      <span>Terms and Conditions</span>
+      <span>Privacy Policy</span>
+      <span>Returns and Refunds</span>
+      <strong>© {{ 'now' | date: '%Y' }} {{ shop.name | default: 'The Vacuum Wizard' }}</strong>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "footer_menu",
+      "label": "Footer menu"
+    },
+    {
+      "type": "text",
+      "id": "address",
+      "label": "Address",
+      "default": "Tindale Works, Marsh Lane, Temple Cloud, Bristol BS39 5AZ"
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "Phone",
+      "default": "03333 701 701"
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "Email",
+      "default": "sales@thevacuumwizard.co.uk"
+    }
+  ]
+}
+{% endschema %}

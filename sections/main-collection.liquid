@@ -1,0 +1,26 @@
+<section class="page-width template-section">
+  <header class="template-heading">
+    <h1>{{ collection.title }}</h1>
+    {% if collection.description != blank %}
+      <div class="rte">{{ collection.description }}</div>
+    {% endif %}
+  </header>
+  <div class="product-grid">
+    {% paginate collection.products by 24 %}
+      {% for product in collection.products %}
+        {% render 'vw-product-card', product: product %}
+      {% else %}
+        <p>No products found in this collection.</p>
+      {% endfor %}
+      {% if paginate.pages > 1 %}
+        <nav class="pagination" role="navigation">{{ paginate | default_pagination }}</nav>
+      {% endif %}
+    {% endpaginate %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Main collection"
+}
+{% endschema %}

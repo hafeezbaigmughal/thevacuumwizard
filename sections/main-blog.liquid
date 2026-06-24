@@ -1,0 +1,23 @@
+<section class="page-width template-section">
+  <header class="template-heading">
+    <h1>{{ blog.title }}</h1>
+  </header>
+  <div class="blog-grid">
+    {% paginate blog.articles by 12 %}
+      {% for article in blog.articles %}
+        {% render 'vw-blog-card', article: article %}
+      {% else %}
+        <p>No articles found.</p>
+      {% endfor %}
+      {% if paginate.pages > 1 %}
+        <nav class="pagination" role="navigation">{{ paginate | default_pagination }}</nav>
+      {% endif %}
+    {% endpaginate %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Main blog"
+}
+{% endschema %}

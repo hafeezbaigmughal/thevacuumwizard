@@ -1,0 +1,27 @@
+<section class="page-width template-section product-template">
+  <div class="product-template__media">
+    {% if product.featured_image %}
+      {% assign product_alt = product.featured_image.alt | default: product.title %}
+      {{ product.featured_image | image_url: width: 900 | image_tag: loading: 'eager', alt: product_alt }}
+    {% else %}
+      <img src="{{ 'vacuum-wizard-product-a.png' | asset_url }}" alt="{{ product.title | escape }}">
+    {% endif %}
+  </div>
+  <div class="product-template__info">
+    <h1>{{ product.title }}</h1>
+    <div class="template-price">{{ product.price | money }}</div>
+    <div class="rte">{{ product.description }}</div>
+    {% form 'product', product %}
+      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+      <button class="button button--red" type="submit" {% unless product.available %}disabled{% endunless %}>
+        {% if product.available %}Add to Cart{% else %}Sold Out{% endif %}
+      </button>
+    {% endform %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Main product"
+}
+{% endschema %}

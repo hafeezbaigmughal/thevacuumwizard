@@ -1,0 +1,21 @@
+<section class="page-width template-section account-form">
+  <h1>Create account</h1>
+  {% form 'create_customer' %}
+    {{ form.errors | default_errors }}
+    <label for="RegisterFirstName">First name</label>
+    <input id="RegisterFirstName" type="text" name="customer[first_name]" autocomplete="given-name">
+    <label for="RegisterLastName">Last name</label>
+    <input id="RegisterLastName" type="text" name="customer[last_name]" autocomplete="family-name">
+    <label for="RegisterEmail">Email</label>
+    <input id="RegisterEmail" type="email" name="customer[email]" autocomplete="email">
+    <label for="RegisterPassword">Password</label>
+    <input id="RegisterPassword" type="password" name="customer[password]" autocomplete="new-password">
+    <button class="button button--red" type="submit">Create</button>
+  {% endform %}
+</section>
+
+{% schema %}
+{
+  "name": "Customer register"
+}
+{% endschema %}

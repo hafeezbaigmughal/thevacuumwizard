@@ -1,0 +1,25 @@
+{
+  "sections": {
+    "main": {
+      "type": "vacuum-home",
+      "blocks": {
+        "model_v6": { "type": "model", "settings": { "title": "Dyson V6" } },
+        "model_v7": { "type": "model", "settings": { "title": "Dyson V7" } },
+        "model_v8": { "type": "model", "settings": { "title": "Dyson V8" } },
+        "model_v10": { "type": "model", "settings": { "title": "Dyson V10" } },
+        "model_v11": { "type": "model", "settings": { "title": "Dyson V11" } }
+      },
+      "block_order": [
+        "model_v6",
+        "model_v7",
+        "model_v8",
+        "model_v10",
+        "model_v11"
+      ],
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

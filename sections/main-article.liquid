@@ -1,0 +1,15 @@
+<article class="page-width template-section article-page">
+  {% if article.image %}
+    {% assign article_alt = article.image.alt | default: article.title %}
+    {{ article.image | image_url: width: 1200 | image_tag: loading: 'eager', alt: article_alt, class: 'article-page__image' }}
+  {% endif %}
+  <time>{{ article.published_at | date: '%d %b %Y' }}</time>
+  <h1>{{ article.title }}</h1>
+  <div class="rte">{{ article.content }}</div>
+</article>
+
+{% schema %}
+{
+  "name": "Main article"
+}
+{% endschema %}
