@@ -448,6 +448,14 @@ a {
   background: var(--vw-red);
 }
 
+.home-product-tabs__panel {
+  display: none;
+}
+
+.home-product-tabs__panel.is-active {
+  display: block;
+}
+
 .shipping-banner {
   min-height: 330px;
   background: url("vacuum-wizard-banner.png") center / cover no-repeat;
@@ -1835,6 +1843,7 @@ p,
   border-radius: 0;
   font-size: 13px;
   font-weight: 600;
+  cursor: pointer;
 }
 
 .shipping-banner {

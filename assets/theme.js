@@ -43,6 +43,27 @@ document.querySelectorAll('[data-product-tabs]').forEach((tabs) => {
   });
 });
 
+document.querySelectorAll('[data-home-product-tabs]').forEach((tabs) => {
+  const buttons = tabs.querySelectorAll('[data-home-product-tab]');
+  const panels = tabs.querySelectorAll('[data-home-product-panel]');
+
+  buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const target = button.dataset.homeProductTab;
+
+      buttons.forEach((item) => {
+        const isActive = item === button;
+        item.classList.toggle('is-active', isActive);
+        item.setAttribute('aria-selected', String(isActive));
+      });
+
+      panels.forEach((panel) => {
+        panel.classList.toggle('is-active', panel.dataset.homeProductPanel === target);
+      });
+    });
+  });
+});
+
 document.querySelectorAll('.product-detail__form').forEach((form) => {
   const variantSelect = form.querySelector('[data-product-variant-select]');
   const optionSelects = form.querySelectorAll('[data-product-option]');

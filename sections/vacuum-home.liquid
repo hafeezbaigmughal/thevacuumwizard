@@ -20,6 +20,22 @@
     assign featured_collection = collections['all']
   endif
 
+  assign latest_collection = section.settings.latest_collection
+  if latest_collection == blank
+    assign latest_collection = collections['latest-products']
+  endif
+  if latest_collection == blank
+    assign latest_collection = collections['all']
+  endif
+
+  assign vacuum_collection = section.settings.vacuum_collection
+  if vacuum_collection == blank
+    assign vacuum_collection = collections['vacuum-products']
+  endif
+  if vacuum_collection == blank
+    assign vacuum_collection = collections['all']
+  endif
+
   assign related_collection = section.settings.related_collection
   if related_collection == blank
     assign related_collection = best_sellers_collection
@@ -27,6 +43,8 @@
 
   assign best_sellers_limit = section.settings.best_sellers_limit | default: 6
   assign featured_limit = section.settings.featured_limit | default: 8
+  assign latest_limit = section.settings.latest_limit | default: 8
+  assign vacuum_limit = section.settings.vacuum_limit | default: 8
   assign related_limit = section.settings.related_limit | default: 4
 -%}
 
@@ -124,28 +142,57 @@
       {% endif %}
     </div>
 
-    <div class="tabs-row">
-      <button class="tab is-active" type="button">Featured Products</button>
-      <button class="tab" type="button">Latest Products</button>
-      <button class="tab" type="button">Vacuum Products</button>
-    </div>
-    <div class="product-grid">
-      {% if featured_collection != blank and featured_collection.products.size > 0 %}
-        {% for product in featured_collection.products limit: featured_limit %}
-          {% render 'vw-product-card', product: product %}
-        {% endfor %}
-      {% else %}
-        {% assign manual_featured_count = 0 %}
-        {% for block in section.blocks %}
-          {% if block.type == 'featured_product' and block.settings.product != blank %}
-            {% assign manual_featured_count = manual_featured_count | plus: 1 %}
-            {% render 'vw-product-card', product: block.settings.product %}
+    <div class="home-product-tabs" data-home-product-tabs>
+      <div class="tabs-row" role="tablist" aria-label="Homepage product groups">
+        <button class="tab is-active" type="button" role="tab" aria-selected="true" data-home-product-tab="featured">Featured Products</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-home-product-tab="latest">Latest Products</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-home-product-tab="vacuum">Vacuum Products</button>
+      </div>
+
+      <div class="home-product-tabs__panel is-active" data-home-product-panel="featured">
+        <div class="product-grid">
+          {% if featured_collection != blank and featured_collection.products.size > 0 %}
+            {% for product in featured_collection.products limit: featured_limit %}
+              {% render 'vw-product-card', product: product %}
+            {% endfor %}
+          {% else %}
+            {% assign manual_featured_count = 0 %}
+            {% for block in section.blocks %}
+              {% if block.type == 'featured_product' and block.settings.product != blank %}
+                {% assign manual_featured_count = manual_featured_count | plus: 1 %}
+                {% render 'vw-product-card', product: block.settings.product %}
+              {% endif %}
+            {% endfor %}
+            {% if manual_featured_count == 0 %}
+              <p class="section-empty">Select a Featured Products collection in the theme editor.</p>
+            {% endif %}
           {% endif %}
-        {% endfor %}
-        {% if manual_featured_count == 0 %}
-          <p class="section-empty">Select a Featured Products collection in the theme editor.</p>
-        {% endif %}
-      {% endif %}
+        </div>
+      </div>
+
+      <div class="home-product-tabs__panel" data-home-product-panel="latest">
+        <div class="product-grid">
+          {% if latest_collection != blank and latest_collection.products.size > 0 %}
+            {% for product in latest_collection.products limit: latest_limit %}
+              {% render 'vw-product-card', product: product %}
+            {% endfor %}
+          {% else %}
+            <p class="section-empty">Select a Latest Products collection in the theme editor.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="home-product-tabs__panel" data-home-product-panel="vacuum">
+        <div class="product-grid">
+          {% if vacuum_collection != blank and vacuum_collection.products.size > 0 %}
+            {% for product in vacuum_collection.products limit: vacuum_limit %}
+              {% render 'vw-product-card', product: product %}
+            {% endfor %}
+          {% else %}
+            <p class="section-empty">Select a Vacuum Products collection in the theme editor.</p>
+          {% endif %}
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -294,6 +341,34 @@
       "type": "range",
       "id": "featured_limit",
       "label": "Featured Products to show",
+      "min": 4,
+      "max": 16,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "collection",
+      "id": "latest_collection",
+      "label": "Latest Products collection"
+    },
+    {
+      "type": "range",
+      "id": "latest_limit",
+      "label": "Latest Products to show",
+      "min": 4,
+      "max": 16,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "collection",
+      "id": "vacuum_collection",
+      "label": "Vacuum Products collection"
+    },
+    {
+      "type": "range",
+      "id": "vacuum_limit",
+      "label": "Vacuum Products to show",
       "min": 4,
       "max": 16,
       "step": 1,
