@@ -11,7 +11,7 @@
         {% if product.featured_image %}
           {{ product.featured_image | image_url: width: 1000 | image_tag: loading: 'eager', alt: product_alt, id: 'ProductMainImage' }}
         {% else %}
-          <img id="ProductMainImage" src="{{ 'vacuum-wizard-product-a.png' | asset_url }}" alt="{{ product.title | escape }}">
+          <img id="ProductMainImage" src="{{ 'vacuum-wizard-product-a.png' | asset_url }}" alt="{{ product.title | escape }}" width="335" height="255">
         {% endif %}
       </div>
 

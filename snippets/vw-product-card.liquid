@@ -11,7 +11,7 @@
     {% if product != blank and product.featured_image %}
       {{ product.featured_image | image_url: width: 520 | image_tag: loading: 'lazy', alt: product_alt }}
     {% else %}
-      <img src="{{ fallback_image | asset_url }}" alt="{{ fallback_title | escape }}" loading="lazy">
+      <img src="{{ fallback_image | asset_url }}" alt="{{ fallback_title | escape }}" loading="lazy" width="335" height="255">
     {% endif %}
     <span class="product-card__badge" aria-hidden="true">+</span>
   </a>

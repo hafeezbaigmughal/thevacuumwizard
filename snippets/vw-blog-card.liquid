@@ -11,7 +11,7 @@
     {% if article != blank and article.image %}
       {{ article.image | image_url: width: 720 | image_tag: loading: 'lazy', alt: article_alt }}
     {% else %}
-      <img src="{{ fallback_image | asset_url }}" alt="{{ fallback_title | escape }}" loading="lazy">
+      <img src="{{ fallback_image | asset_url }}" alt="{{ fallback_title | escape }}" loading="lazy" width="350" height="230">
     {% endif %}
   </a>
   <div class="blog-card__content">

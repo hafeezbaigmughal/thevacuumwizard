@@ -2,10 +2,10 @@
   <div class="footer-red">
     <div class="page-width footer-grid">
       <div class="footer-brand">
-        <img src="{{ 'vacuum-wp-footer-award.png' | asset_url }}" alt="The Vacuum Wizard">
+        <img src="{{ 'vacuum-wp-footer-award.png' | asset_url }}" alt="The Vacuum Wizard" width="200" height="200">
         <p>Dyson and the Dyson logo are trademarks of Dyson Technology Limited.</p>
         <div class="payments">
-          <img src="{{ 'vacuum-wp-payment-logos.png' | asset_url }}" alt="Accepted payment methods">
+          <img src="{{ 'vacuum-wp-payment-logos.png' | asset_url }}" alt="Accepted payment methods" width="354" height="34">
         </div>
       </div>
 
@@ -17,7 +17,7 @@
               <li><a href="{{ link.url }}">{{ link.title }}</a></li>
             {% endfor %}
           {% else %}
-            <li><a href="/">Home</a></li>
+            <li><a href="{{ routes.root_url }}">Home</a></li>
             <li><a href="/pages/about-us">About Us</a></li>
             <li><a href="/pages/spares-and-repairs">Dyson Repairs and Servicing</a></li>
             <li><a href="/policies/refund-policy">Refund Policy</a></li>

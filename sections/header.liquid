@@ -16,7 +16,7 @@
       {% if section.settings.logo != blank %}
         {{ section.settings.logo | image_url: width: 260 | image_tag: loading: 'eager', alt: shop.name }}
       {% else %}
-        <img src="{{ 'vacuum-wp-logo.png' | asset_url }}" alt="The Vacuum Wizard">
+        <img src="{{ 'vacuum-wp-logo.png' | asset_url }}" alt="The Vacuum Wizard" width="212" height="107">
       {% endif %}
     </a>
 
