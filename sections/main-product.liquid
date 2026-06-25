@@ -1,27 +1,251 @@
-<section class="page-width template-section product-template">
-  <div class="product-template__media">
-    {% if product.featured_image %}
-      {% assign product_alt = product.featured_image.alt | default: product.title %}
-      {{ product.featured_image | image_url: width: 900 | image_tag: loading: 'eager', alt: product_alt }}
-    {% else %}
-      <img src="{{ 'vacuum-wizard-product-a.png' | asset_url }}" alt="{{ product.title | escape }}">
-    {% endif %}
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign product_alt = product.featured_image.alt | default: product.title
+  assign related_collection = product.collections.first
+-%}
+
+<section class="page-width product-detail template-section" data-section-id="{{ section.id }}">
+  <div class="product-detail__top">
+    <div class="product-detail__gallery">
+      <div class="product-detail__main-image">
+        {% if product.featured_image %}
+          {{ product.featured_image | image_url: width: 1000 | image_tag: loading: 'eager', alt: product_alt, id: 'ProductMainImage' }}
+        {% else %}
+          <img id="ProductMainImage" src="{{ 'vacuum-wizard-product-a.png' | asset_url }}" alt="{{ product.title | escape }}">
+        {% endif %}
+      </div>
+
+      {% if product.images.size > 1 %}
+        <div class="product-detail__thumbs" aria-label="Product images">
+          {% for image in product.images %}
+            {% assign thumb_alt = image.alt | default: product.title %}
+            <button class="product-detail__thumb{% if forloop.first %} is-active{% endif %}" type="button" data-product-thumb="{{ image | image_url: width: 1000 }}" aria-label="Show image {{ forloop.index }}">
+              {{ image | image_url: width: 180 | image_tag: loading: 'lazy', alt: thumb_alt }}
+            </button>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="product-detail__summary">
+      <h1>{{ product.title }}</h1>
+
+      <div class="product-detail__rating">
+        <span aria-hidden="true">*****</span>
+        <a href="#ProductReviews">Reviews</a>
+      </div>
+
+      <div class="product-detail__price" data-product-price>
+        {{ current_variant.price | money }}
+        <small>Including VAT</small>
+      </div>
+
+      {% if section.settings.show_short_description %}
+        <div class="product-detail__short rte">
+          {% if product.metafields.custom.short_description != blank %}
+            {{ product.metafields.custom.short_description | metafield_tag }}
+          {% else %}
+            <p>{{ product.description | strip_html | truncatewords: section.settings.short_description_words }}</p>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <p class="product-detail__stock{% unless current_variant.available %} is-out{% endunless %}" data-product-stock>
+        {% if current_variant.available %}
+          In stock
+        {% else %}
+          Out of stock
+        {% endif %}
+      </p>
+
+      {% form 'product', product, class: 'product-detail__form' %}
+        {% unless product.has_only_default_variant %}
+          <div class="product-detail__options">
+            {% for option in product.options_with_values %}
+              <label for="ProductOption-{{ section.id }}-{{ forloop.index0 }}">{{ option.name }}</label>
+              <select id="ProductOption-{{ section.id }}-{{ forloop.index0 }}" data-product-option="{{ forloop.index0 }}">
+                {% for value in option.values %}
+                  <option value="{{ value | escape }}" {% if option.selected_value == value %}selected{% endif %}>{{ value }}</option>
+                {% endfor %}
+              </select>
+            {% endfor %}
+          </div>
+
+          <label class="product-detail__variant-label" for="ProductVariant-{{ section.id }}">Variant</label>
+          <select id="ProductVariant-{{ section.id }}" name="id" data-product-variant-select>
+            {% for variant in product.variants %}
+              <option
+                value="{{ variant.id }}"
+                data-price="{{ variant.price | money }}"
+                data-available="{{ variant.available }}"
+                data-sku="{{ variant.sku | escape }}"
+                data-options="{{ variant.options | join: '||' | escape }}"
+                {% if variant == current_variant %}selected{% endif %}
+                {% unless variant.available %}disabled{% endunless %}
+              >
+                {{ variant.title }} - {{ variant.price | money }}{% unless variant.available %} - Sold out{% endunless %}
+              </option>
+            {% endfor %}
+          </select>
+        {% else %}
+          <input type="hidden" name="id" value="{{ current_variant.id }}">
+        {% endunless %}
+
+        <div class="product-detail__buy-row">
+          <label for="Quantity-{{ section.id }}">Quantity</label>
+          <input id="Quantity-{{ section.id }}" type="number" name="quantity" value="1" min="1">
+          <button class="button button--red product-detail__submit" type="submit" {% unless current_variant.available %}disabled{% endunless %} data-product-submit>
+            {% if current_variant.available %}Add to Cart{% else %}Sold Out{% endif %}
+          </button>
+        </div>
+
+        {% if section.settings.show_dynamic_checkout %}
+          <div class="product-detail__payment">
+            {{ form | payment_button }}
+          </div>
+        {% endif %}
+      {% endform %}
+
+      <a class="product-detail__wishlist" href="/pages/wishlist">Add to Wishlist</a>
+
+      <div class="product-detail__meta">
+        {% if current_variant.sku != blank %}
+          <p><strong>SKU:</strong> <span data-product-sku>{{ current_variant.sku }}</span></p>
+        {% endif %}
+        {% if product.vendor != blank %}
+          <p><strong>Brand:</strong> {{ product.vendor }}</p>
+        {% endif %}
+        {% if product.type != blank %}
+          <p><strong>Type:</strong> {{ product.type }}</p>
+        {% endif %}
+        {% if product.collections.size > 0 %}
+          <p><strong>Categories:</strong>
+            {% for collection in product.collections limit: 5 %}
+              <a href="{{ collection.url }}">{{ collection.title }}</a>{% unless forloop.last %}, {% endunless %}
+            {% endfor %}
+          </p>
+        {% endif %}
+      </div>
+    </div>
   </div>
-  <div class="product-template__info">
-    <h1>{{ product.title }}</h1>
-    <div class="template-price">{{ product.price | money }}</div>
-    <div class="rte">{{ product.description }}</div>
-    {% form 'product', product %}
-      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-      <button class="button button--red" type="submit" {% unless product.available %}disabled{% endunless %}>
-        {% if product.available %}Add to Cart{% else %}Sold Out{% endif %}
-      </button>
-    {% endform %}
+
+  <div class="product-tabs" data-product-tabs>
+    <div class="product-tabs__nav" role="tablist">
+      <button class="is-active" type="button" role="tab" aria-selected="true" data-product-tab-button="description">Description</button>
+      <button type="button" role="tab" aria-selected="false" data-product-tab-button="additional">Additional information</button>
+      <button type="button" role="tab" aria-selected="false" data-product-tab-button="reviews">Reviews</button>
+    </div>
+
+    <div class="product-tabs__panel rte is-active" role="tabpanel" data-product-tab-panel="description">
+      <h2>Description</h2>
+      {{ product.description }}
+    </div>
+
+    <div class="product-tabs__panel" role="tabpanel" data-product-tab-panel="additional">
+      <h2>Additional information</h2>
+      <table class="product-detail__table">
+        <tbody>
+          {% if current_variant.weight > 0 %}
+            <tr>
+              <th scope="row">Weight</th>
+              <td>{{ current_variant.weight | weight_with_unit }}</td>
+            </tr>
+          {% endif %}
+          {% if current_variant.sku != blank %}
+            <tr>
+              <th scope="row">SKU</th>
+              <td>{{ current_variant.sku }}</td>
+            </tr>
+          {% endif %}
+          {% for option in product.options_with_values %}
+            <tr>
+              <th scope="row">{{ option.name }}</th>
+              <td>{{ option.values | join: ', ' }}</td>
+            </tr>
+          {% endfor %}
+          {% if product.tags.size > 0 %}
+            <tr>
+              <th scope="row">Tags</th>
+              <td>{{ product.tags | join: ', ' }}</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="product-tabs__panel product-reviews" role="tabpanel" data-product-tab-panel="reviews" id="ProductReviews">
+      <h2>Reviews</h2>
+      <p>There are no reviews yet.</p>
+      <div class="product-reviews__form">
+        <h3>Be the first to review "{{ product.title }}"</h3>
+        <label>Your rating</label>
+        <div class="product-reviews__stars" aria-hidden="true">*****</div>
+        <label for="ReviewBody-{{ section.id }}">Your review</label>
+        <textarea id="ReviewBody-{{ section.id }}" rows="6"></textarea>
+        <button class="button button--red" type="button">Submit</button>
+      </div>
+    </div>
   </div>
+
+  {% if section.settings.show_related_products and related_collection != blank %}
+    <section class="product-related">
+      <h2>Related products</h2>
+      <div class="product-grid product-grid--related">
+        {% assign shown_related = 0 %}
+        {% for related_product in related_collection.products limit: 8 %}
+          {% unless related_product.id == product.id %}
+            {% render 'vw-product-card', product: related_product %}
+            {% assign shown_related = shown_related | plus: 1 %}
+          {% endunless %}
+          {% if shown_related >= section.settings.related_limit %}
+            {% break %}
+          {% endif %}
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
 </section>
 
 {% schema %}
 {
-  "name": "Main product"
+  "name": "Main product",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_short_description",
+      "label": "Show short description",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "short_description_words",
+      "label": "Short description words",
+      "min": 20,
+      "max": 120,
+      "step": 5,
+      "default": 45
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dynamic_checkout",
+      "label": "Show dynamic checkout button",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_related_products",
+      "label": "Show related products",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "related_limit",
+      "label": "Related products to show",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "default": 4
+    }
+  ]
 }
 {% endschema %}
