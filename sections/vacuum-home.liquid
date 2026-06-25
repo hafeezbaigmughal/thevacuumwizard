@@ -48,224 +48,291 @@
   assign related_limit = section.settings.related_limit | default: 4
 -%}
 
-<section class="hero-shot" aria-label="{{ section.settings.hero_label | escape }}">
-  <div class="page-width hero-shot__links">
-    <a class="hero-shot__hotspot hero-shot__hotspot--shop" href="{{ shop_link }}" aria-label="Shop now"></a>
-    <a class="hero-shot__hotspot hero-shot__hotspot--call" href="tel:{{ section.settings.phone | remove: ' ' }}" aria-label="Call us now"></a>
+<section class="banner_home" aria-label="{{ section.settings.hero_label | escape }}">
+  <img class="banner_home_img" src="{{ 'home-hero-bg.webp' | asset_url }}" alt="The Vacuum Wizard" width="1920" height="578">
+  <div class="captionBox">
+    <div class="wrapper">
+      <div class="caption">
+        <div class="left-div">
+          <h1>The Independent <strong>Dyson Hand Held</strong> <span>Vacuum Specialists</span></h1>
+          <ul>
+            <li><a href="{{ shop_link }}">shop now</a></li>
+            <li><a href="{{ contact_link }}">Call Us Now</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="right-div">
+        <ul>
+          <li><img src="{{ 'home-hero-part.webp' | asset_url }}" alt="Dyson vacuum part" width="432" height="460"></li>
+          <li><img src="{{ 'home-hero-battery.webp' | asset_url }}" alt="Dyson battery" width="225" height="314"></li>
+        </ul>
+      </div>
+    </div>
   </div>
 </section>
 
-<section class="model-section">
-  <div class="page-width">
-    <h2>Choose Your Model Below For Spare Parts <span>Or Complete Machines</span></h2>
-    <div class="section-line"></div>
-    <div class="model-grid">
-      {% assign model_fallbacks = 'vacuum-wizard-model-v6.png|vacuum-wizard-model-v7.png|vacuum-wizard-model-v8.png|vacuum-wizard-model-v10.png|vacuum-wizard-model-v11.png' | split: '|' %}
-      {% assign model_index = 0 %}
+<section class="modelparts">
+  <div class="wrapper">
+    <h2 class="title_center2">Choose Your Model Below For Spare Parts <span>Or Complete Machines</span></h2>
+    <ul id="modelparts_slider">
+      {%- assign model_fallbacks = 'home-dyson-v6.jpg|home-dyson-v7.jpg|home-dyson-v8.jpg|home-dyson-v10.jpg|home-dyson-v11.jpg' | split: '|' -%}
+      {%- assign model_index = 0 -%}
       {% for block in section.blocks %}
         {% if block.type == 'model' %}
-          {% assign fallback = model_fallbacks[model_index] | default: 'vacuum-wizard-model-v6.png' %}
-          <a class="model-tile" href="{{ block.settings.link | default: routes.all_products_collection_url }}" {{ block.shopify_attributes }}>
-            {% if block.settings.image != blank %}
-              {{ block.settings.image | image_url: width: 260 | image_tag: loading: 'lazy', alt: block.settings.title }}
-            {% else %}
-              <img src="{{ fallback | asset_url }}" alt="{{ block.settings.title | escape }}" loading="lazy" width="155" height="115">
-            {% endif %}
-            <strong>{{ block.settings.title }}</strong>
-          </a>
+          {% assign fallback = model_fallbacks[model_index] | default: 'home-dyson-v6.jpg' %}
+          <li {{ block.shopify_attributes }}>
+            <a href="{{ block.settings.link | default: routes.all_products_collection_url }}">
+              <div class="modelparts_pic">
+                {% if block.settings.image != blank %}
+                  {{ block.settings.image | image_url: width: 292 | image_tag: loading: 'lazy', alt: block.settings.title }}
+                {% else %}
+                  <img src="{{ fallback | asset_url }}" alt="{{ block.settings.title | escape }}" loading="lazy" width="146" height="148">
+                {% endif %}
+              </div>
+              <div class="modelparts_text"><h3>{{ block.settings.title }}</h3></div>
+            </a>
+          </li>
           {% assign model_index = model_index | plus: 1 %}
         {% endif %}
       {% endfor %}
+    </ul>
+  </div>
+</section>
+
+<section class="why_choose_us">
+  <div class="wrapper">
+    <h2 class="title_center1"><span>Why <strong>Choose Us</strong></span></h2>
+  </div>
+  <div class="why_choose_us_box">
+    <div class="wrapper">
+      <ul>
+        <li>
+          <div class="why_choose_us_item">
+            <div class="why_choose_us_pic" aria-hidden="true"></div>
+            <h3>Express UK Delivery</h3>
+            <h4>On all orders only &pound;4.99</h4>
+          </div>
+        </li>
+        <li>
+          <div class="why_choose_us_item">
+            <div class="why_choose_us_pic" aria-hidden="true"></div>
+            <h3>Large stock</h3>
+            <h4>of Dyson Hand Held Vacuum Parts</h4>
+          </div>
+        </li>
+        <li>
+          <div class="why_choose_us_item">
+            <div class="why_choose_us_pic" aria-hidden="true"></div>
+            <h3>Next Business Day Delivery</h3>
+            <h4>On all UK orders placed before 2pm</h4>
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
 </section>
 
-<section class="why-section">
-  <div class="page-width">
-    <h2>Why <span>Choose Us</span></h2>
-    <div class="benefit-row">
-      <div>
-        <span>UK</span>
-        <strong>Express UK Delivery</strong>
-        <p>On all orders only &pound;4.99</p>
-      </div>
-      <div>
-        <span>+</span>
-        <strong>Large stock</strong>
-        <p>of Dyson Hand Held Vacuum Parts</p>
-      </div>
-      <div>
-        <span>24</span>
-        <strong>Next Business Day Delivery</strong>
-        <p>On all UK orders placed before 2pm</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="about-band">
-  <div class="page-width about-grid">
-    <div class="about-copy">
+<section class="about_vacuum">
+  <div class="wrapper">
+    <div class="about_vaccum_text">
       <h2>{{ section.settings.about_heading }}</h2>
       <div class="rte">{{ section.settings.about_text }}</div>
-      <a class="button button--red" href="{{ about_link }}">About Us</a>
+      <a href="{{ about_link }}" class="btn1">About Us</a>
     </div>
-    <div class="about-image">
+    <div class="about_vaccum_pic">
       {% if section.settings.about_image != blank %}
-        {{ section.settings.about_image | image_url: width: 620 | image_tag: loading: 'lazy', alt: section.settings.about_heading }}
+        {{ section.settings.about_image | image_url: width: 720 | image_tag: loading: 'lazy', alt: section.settings.about_heading }}
       {% else %}
-        <img src="{{ 'vacuum-wizard-about.png' | asset_url }}" alt="Dyson vacuum in a home" loading="lazy" width="385" height="470">
+        <img src="{{ 'home-about.jpg' | asset_url }}" alt="Dyson vacuum in a home" loading="lazy" width="1594" height="1600">
       {% endif %}
+      <div class="about_overlay">
+        <div class="about_vaccum_box"><a href="{{ about_link }}" class="btn1">About Us</a></div>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="products-section">
-  <div class="page-width">
-    <h2>Best <span>Sellers</span></h2>
-    <div class="product-grid product-grid--best">
-      {% if best_sellers_collection != blank and best_sellers_collection.products.size > 0 %}
-        {% for product in best_sellers_collection.products limit: best_sellers_limit %}
-          {% render 'vw-product-card', product: product %}
-        {% endfor %}
-      {% else %}
-        {% assign manual_best_count = 0 %}
-        {% for block in section.blocks %}
-          {% if block.type == 'best_product' and block.settings.product != blank %}
-            {% assign manual_best_count = manual_best_count | plus: 1 %}
-            {% render 'vw-product-card', product: block.settings.product %}
-          {% endif %}
-        {% endfor %}
-        {% if manual_best_count == 0 %}
-          <p class="section-empty">Select a Best Sellers collection in the theme editor.</p>
+<section class="best_seller">
+  <div class="wrapper">
+    <h2 class="title_center1"><span>Best <strong>Sellers</strong></span></h2>
+    <div class="best_product_details">
+      <ul>
+        {% if best_sellers_collection != blank and best_sellers_collection.products.size > 0 %}
+          {% for product in best_sellers_collection.products limit: best_sellers_limit %}
+            {% render 'vw-home-product-card', product: product, media_class: 'best_product_details_pic', text_class: 'best_product_details_text' %}
+          {% endfor %}
+        {% else %}
+          {% assign best_images = 'home-product-logo.png|home-product-v6-battery.jpg|home-product-v10-vacwiz.jpg|home-product-v10-battery.jpg|home-product-v11-battery.jpg|home-product-v11-battery.jpg' | split: '|' %}
+          {% assign best_titles = 'Dyson V15 Detect Total Clean Cordless Vacuum Cleaner|Dyson V6 Genuine Battery Power Pack 967810-21|Dyson V10 VacWiz Battery Power Pack 969352-02|Dyson V10 Genuine Battery Power Pack 969352-02|Dyson VacWiz V11 SV14 Battery Power Pack Replacement 970145-02|Dyson V11 SV14 Genuine Battery Power Pack 970145-02' | split: '|' %}
+          {% assign best_prices = '&pound; 499.99|&pound; 64.99|&pound; 52.99|&pound; 89.99|&pound; 58.99|&pound; 89.99' | split: '|' %}
+          {% for image in best_images %}
+            {% render 'vw-home-product-card', fallback_image: image, fallback_title: best_titles[forloop.index0], fallback_price: best_prices[forloop.index0], media_class: 'best_product_details_pic', text_class: 'best_product_details_text' %}
+          {% endfor %}
         {% endif %}
-      {% endif %}
+      </ul>
     </div>
+  </div>
+</section>
 
-    <div class="home-product-tabs" data-home-product-tabs>
-      <div class="tabs-row" role="tablist" aria-label="Homepage product groups">
-        <button class="tab is-active" type="button" role="tab" aria-selected="true" data-home-product-tab="featured">Featured Products</button>
-        <button class="tab" type="button" role="tab" aria-selected="false" data-home-product-tab="latest">Latest Products</button>
-        <button class="tab" type="button" role="tab" aria-selected="false" data-home-product-tab="vacuum">Vacuum Products</button>
-      </div>
+<section class="pruduct_category" data-home-product-tabs>
+  <div class="wrapper">
+    <div id="tabs-containers">
+      <ul class="pruduct_category_tabs-menus" role="tablist" aria-label="Homepage product groups">
+        <li class="pruduct_category_currents"><button class="tab" type="button" role="tab" aria-selected="true" data-home-product-tab="featured">Featured Products</button></li>
+        <li><button class="tab" type="button" role="tab" aria-selected="false" data-home-product-tab="latest">Latest Products</button></li>
+        <li><button class="tab" type="button" role="tab" aria-selected="false" data-home-product-tab="vacuum">Vacuum Products</button></li>
+      </ul>
 
-      <div class="home-product-tabs__panel is-active" data-home-product-panel="featured">
-        <div class="product-grid">
-          {% if featured_collection != blank and featured_collection.products.size > 0 %}
-            {% for product in featured_collection.products limit: featured_limit %}
-              {% render 'vw-product-card', product: product %}
-            {% endfor %}
-          {% else %}
-            {% assign manual_featured_count = 0 %}
-            {% for block in section.blocks %}
-              {% if block.type == 'featured_product' and block.settings.product != blank %}
-                {% assign manual_featured_count = manual_featured_count | plus: 1 %}
-                {% render 'vw-product-card', product: block.settings.product %}
-              {% endif %}
-            {% endfor %}
-            {% if manual_featured_count == 0 %}
-              <p class="section-empty">Select a Featured Products collection in the theme editor.</p>
+      <div class="pruduct_category_tab-contents home-product-tabs__panel is-active" data-home-product-panel="featured">
+        <div class="pruduct_category_dtls pruduct_category_tab_dtls_1">
+          <ul>
+            {% if featured_collection != blank and featured_collection.products.size > 0 %}
+              {% for product in featured_collection.products limit: featured_limit %}
+                {% render 'vw-home-product-card', product: product, wrapper_class: 'product_element_details', media_class: 'best_product_details_pic', text_class: 'best_product_details_text' %}
+              {% endfor %}
+            {% else %}
+              {% assign tab_images = 'home-product-logo.png|home-product-v10-battery.jpg|home-product-v11-battery.jpg|home-product-charger.jpg' | split: '|' %}
+              {% for image in tab_images %}
+                {% render 'vw-home-product-card', fallback_image: image, wrapper_class: 'product_element_details', media_class: 'best_product_details_pic', text_class: 'best_product_details_text' %}
+              {% endfor %}
             {% endif %}
-          {% endif %}
+          </ul>
         </div>
       </div>
 
-      <div class="home-product-tabs__panel" data-home-product-panel="latest">
-        <div class="product-grid">
-          {% if latest_collection != blank and latest_collection.products.size > 0 %}
-            {% for product in latest_collection.products limit: latest_limit %}
-              {% render 'vw-product-card', product: product %}
-            {% endfor %}
-          {% else %}
-            <p class="section-empty">Select a Latest Products collection in the theme editor.</p>
-          {% endif %}
+      <div class="pruduct_category_tab-contents home-product-tabs__panel" data-home-product-panel="latest">
+        <div class="pruduct_category_dtls pruduct_category_tab_dtls_1">
+          <ul>
+            {% if latest_collection != blank and latest_collection.products.size > 0 %}
+              {% for product in latest_collection.products limit: latest_limit %}
+                {% render 'vw-home-product-card', product: product, wrapper_class: 'product_element_details', media_class: 'best_product_details_pic', text_class: 'best_product_details_text' %}
+              {% endfor %}
+            {% else %}
+              <p class="noproductincategory">Select a Latest Products collection in the theme editor.</p>
+            {% endif %}
+          </ul>
         </div>
       </div>
 
-      <div class="home-product-tabs__panel" data-home-product-panel="vacuum">
-        <div class="product-grid">
-          {% if vacuum_collection != blank and vacuum_collection.products.size > 0 %}
-            {% for product in vacuum_collection.products limit: vacuum_limit %}
-              {% render 'vw-product-card', product: product %}
-            {% endfor %}
-          {% else %}
-            <p class="section-empty">Select a Vacuum Products collection in the theme editor.</p>
-          {% endif %}
+      <div class="pruduct_category_tab-contents home-product-tabs__panel" data-home-product-panel="vacuum">
+        <div class="pruduct_category_dtls pruduct_category_tab_dtls_1">
+          <ul>
+            {% if vacuum_collection != blank and vacuum_collection.products.size > 0 %}
+              {% for product in vacuum_collection.products limit: vacuum_limit %}
+                {% render 'vw-home-product-card', product: product, wrapper_class: 'product_element_details', media_class: 'best_product_details_pic', text_class: 'best_product_details_text' %}
+              {% endfor %}
+            {% else %}
+              <p class="noproductincategory">Select a Vacuum Products collection in the theme editor.</p>
+            {% endif %}
+          </ul>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="shipping-banner">
-  <div class="page-width shipping-banner__links">
-    <a href="{{ shop_link }}" aria-label="Shop now"></a>
-    <a href="{{ contact_link }}" aria-label="Contact us"></a>
+<section class="free_next_day">
+  <div class="wrapper">
+    <div class="free_next_dayBox">
+      <img src="{{ 'home-shipping-box.png' | asset_url }}" alt="Next Working Day Shipping" loading="lazy" width="242" height="290">
+    </div>
+    <div class="free_next_dayText">
+      <h2>Next Working Day Shipping On All Orders Only &pound;4.99</h2>
+      <ul>
+        <li><a href="{{ shop_link }}" class="btn2">shop now</a></li>
+        <li><a href="{{ contact_link }}" class="btn2">Contact us</a></li>
+      </ul>
+    </div>
   </div>
 </section>
 
-<section class="related-section">
-  <div class="page-width">
-    <h2>Related <span>Products</span></h2>
-    <div class="product-grid product-grid--related">
-      {% if related_collection != blank and related_collection.products.size > 0 %}
-        {% for product in related_collection.products limit: related_limit %}
-          {% render 'vw-product-card', product: product %}
-        {% endfor %}
-      {% else %}
-        {% assign manual_related_count = 0 %}
-        {% for block in section.blocks %}
-          {% if block.type == 'related_product' and block.settings.product != blank %}
-            {% assign manual_related_count = manual_related_count | plus: 1 %}
-            {% render 'vw-product-card', product: block.settings.product %}
-          {% endif %}
-        {% endfor %}
-        {% if manual_related_count == 0 %}
-          <p class="section-empty">Select a Related Products collection in the theme editor.</p>
+<section class="related_products">
+  <div class="wrapper">
+    <h2 class="title_center1"><span>Related <strong>Products</strong></span></h2>
+    <div class="related_product_details">
+      <ul>
+        {% if related_collection != blank and related_collection.products.size > 0 %}
+          {% for product in related_collection.products limit: related_limit %}
+            {% render 'vw-home-product-card', product: product, media_class: 'related_product_details_pic', text_class: 'related_product_details_text' %}
+          {% endfor %}
+        {% else %}
+          {% assign related_images = 'home-product-v10-battery.jpg|home-product-v11-battery.jpg|home-product-v11-battery.jpg|home-product-v11-click-battery.jpg' | split: '|' %}
+          {% assign related_titles = 'Dyson V10 Genuine Battery Power Pack 969352-02|Dyson VacWiz V11 SV14 Battery Power Pack Replacement 970145-02|Dyson V11 SV14 Genuine Battery Power Pack 970145-02|Dyson V11 and V15 Click-in Battery 970938-01' | split: '|' %}
+          {% assign related_prices = '&pound; 89.99|&pound; 58.99|&pound; 89.99|&pound; 104.99' | split: '|' %}
+          {% for image in related_images %}
+            {% render 'vw-home-product-card', fallback_image: image, fallback_title: related_titles[forloop.index0], fallback_price: related_prices[forloop.index0], media_class: 'related_product_details_pic', text_class: 'related_product_details_text' %}
+          {% endfor %}
         {% endif %}
-      {% endif %}
+      </ul>
     </div>
   </div>
 </section>
 
-<section class="reviews-section">
-  <div class="page-width">
-    <h2>Latest Reviews</h2>
-    <div class="review-box">
-      <strong>Trustindex</strong>
-      <p>Trustindex verifies that the original source of the review is Google.</p>
+<section class="testimonial">
+  <div class="wrapper">
+    <h2 class="title_center1"><span>latest Reviews</span></h2>
+    <div class="testimonial_global">
+      <div class="review-box">
+        <strong>Trustindex</strong>
+        <p>Trustindex verifies that the original source of the review is Google.</p>
+      </div>
     </div>
-    <a class="button button--outline" href="{{ reviews_link }}">View More</a>
+    <a class="rd_more btn3" href="{{ reviews_link }}">view more</a>
   </div>
 </section>
 
-<section class="blogs-section">
-  <div class="page-width">
-    <h2>Blogs</h2>
-    <div class="blog-grid">
-      {% assign blog_images = 'vacuum-wizard-blog-1.png|vacuum-wizard-blog-2.png|vacuum-wizard-blog-3.png' | split: '|' %}
+<section class="big_season_sale">
+  <div class="wrapper">
+    <a href="{{ shop_link }}"><img src="{{ 'home-season-sale.png' | asset_url }}" alt="The Vacuum Wizard sale" loading="lazy" width="876" height="109"></a>
+  </div>
+</section>
+
+<section class="blogs">
+  <div class="wrapper">
+    <h2 class="title_center1"><span>Blogs</span></h2>
+    <ul>
+      {% assign blog_images = 'home-blog-v7-battery.webp|home-blog-v7-troubleshooting.webp|home-blog-v6-battery.webp' | split: '|' %}
       {% assign blog_titles = 'How to Replace Dyson V7 Battery?|Dyson V7 Troubleshooting: Common Issues and Solutions|How to Replace Dyson V6 Battery?' | split: '|' %}
+      {% assign blog_dates = '03 Jan 2025|12 Oct 2024|07 Sep 2024' | split: '|' %}
       {% assign selected_blog = section.settings.blog %}
       {% for article in selected_blog.articles limit: 3 %}
-        {% assign image = blog_images[forloop.index0] | default: 'vacuum-wizard-blog-1.png' %}
-        {% assign title = blog_titles[forloop.index0] | default: 'Dyson repair guide' %}
-        {% render 'vw-blog-card', article: article, fallback_image: image, fallback_title: title %}
+        {% assign fallback_image = blog_images[forloop.index0] | default: 'home-blog-v7-battery.webp' %}
+        <li>
+          <div class="blog-item">
+            <a href="{{ article.url }}"><div class="blog_pic">{% if article.image %}{{ article.image | image_url: width: 1024 | image_tag: loading: 'lazy', alt: article.title }}{% else %}<img src="{{ fallback_image | asset_url }}" alt="{{ article.title | escape }}" loading="lazy" width="1024" height="628">{% endif %}</div></a>
+            <div class="blog_text">
+              <h5>{{ article.published_at | date: '%d %b %Y' }}</h5>
+              <h3><a href="{{ article.url }}">{{ article.title }}</a></h3>
+              <p>{{ article.excerpt_or_content | strip_html | truncate: 145 }}</p>
+              <a href="{{ article.url }}" class="rd_more">Read More...</a>
+            </div>
+          </div>
+        </li>
       {% else %}
         {% for image in blog_images %}
-          {% assign title = blog_titles[forloop.index0] %}
-          {% render 'vw-blog-card', fallback_image: image, fallback_title: title %}
+          <li>
+            <div class="blog-item">
+              <a href="/blogs/news"><div class="blog_pic"><img src="{{ image | asset_url }}" alt="{{ blog_titles[forloop.index0] | escape }}" loading="lazy" width="1024" height="628"></div></a>
+              <div class="blog_text">
+                <h5>{{ blog_dates[forloop.index0] }}</h5>
+                <h3><a href="/blogs/news">{{ blog_titles[forloop.index0] }}</a></h3>
+                <p>Helpful repair guidance and replacement advice for Dyson cordless vacuum owners.</p>
+                <a href="/blogs/news" class="rd_more">Read More...</a>
+              </div>
+            </div>
+          </li>
         {% endfor %}
       {% endfor %}
-    </div>
-    <a class="button button--outline" href="{{ selected_blog.url | default: '/blogs/news' }}">View More</a>
+    </ul>
+    <a class="rd_more btn3" href="{{ selected_blog.url | default: '/blogs/news' }}">view more</a>
   </div>
 </section>
 
-<section class="seo-copy">
-  <div class="page-width">
-    <h2>{{ section.settings.seo_heading_1 }}</h2>
+<section class="best_seller seo-copy">
+  <div class="wrapper">
+    <h2 class="title_center1">{{ section.settings.seo_heading_1 }}</h2>
     <div class="rte">{{ section.settings.seo_text_1 }}</div>
-    <h2>{{ section.settings.seo_heading_2 }}</h2>
+    <h2 class="title_center1">{{ section.settings.seo_heading_2 }}</h2>
     <div class="rte">{{ section.settings.seo_text_2 }}</div>
   </div>
 </section>
@@ -443,39 +510,6 @@
           "type": "url",
           "id": "link",
           "label": "Link"
-        }
-      ]
-    },
-    {
-      "type": "best_product",
-      "name": "Best seller product",
-      "settings": [
-        {
-          "type": "product",
-          "id": "product",
-          "label": "Product"
-        }
-      ]
-    },
-    {
-      "type": "featured_product",
-      "name": "Featured product",
-      "settings": [
-        {
-          "type": "product",
-          "id": "product",
-          "label": "Product"
-        }
-      ]
-    },
-    {
-      "type": "related_product",
-      "name": "Related product",
-      "settings": [
-        {
-          "type": "product",
-          "id": "product",
-          "label": "Product"
         }
       ]
     }

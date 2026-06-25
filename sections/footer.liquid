@@ -1,52 +1,74 @@
 <footer class="site-footer">
-  <div class="footer-red">
-    <div class="page-width footer-grid">
-      <div class="footer-brand">
-        <img src="{{ 'vacuum-wp-footer-award.png' | asset_url }}" alt="The Vacuum Wizard" width="200" height="200">
-        <p>Dyson and the Dyson logo are trademarks of Dyson Technology Limited.</p>
-        <div class="payments">
-          <img src="{{ 'vacuum-wp-payment-logos.png' | asset_url }}" alt="Accepted payment methods" width="354" height="34">
-        </div>
-      </div>
+  <div class="footer_top">
+    <div class="wrapper">
+      <ul class="footer_dtls">
+        <li class="footer-item">
+          <div class="ftr_logo">
+            <a href="{{ routes.root_url }}">
+              <img src="{{ 'home-footer-award.png' | asset_url }}" alt="The Vacuum Wizard" width="200" height="200">
+            </a>
+          </div>
+          <p>Dyson and the Dyson logo are trademarks of Dyson Technology Limited.</p>
+          <h5>
+            <img src="{{ 'home-payment-logos.png' | asset_url }}" alt="Accepted payment methods" width="354" height="34">
+          </h5>
+        </li>
 
-      <div>
-        <h2>Useful Links</h2>
+        <li class="footer-item">
+          <h3><span>Useful Links</span></h3>
+          <ul class="menu">
+            {% if section.settings.footer_menu != blank and linklists[section.settings.footer_menu].links.size > 0 %}
+              {% for link in linklists[section.settings.footer_menu].links %}
+                <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+              {% endfor %}
+            {% else %}
+              <li><a href="{{ routes.root_url }}">Home</a></li>
+              <li><a href="/pages/about-us">About Us</a></li>
+              <li><a href="/pages/spares-and-repairs">Dyson Repairs and Servicing</a></li>
+              <li><a href="{{ routes.collections_url }}/batteries">Battery Replacement</a></li>
+              <li><a href="/pages/testimonials">Testimonials</a></li>
+              <li><a href="{{ routes.cart_url }}">Cart</a></li>
+              <li><a href="/blogs/news">Blog</a></li>
+              <li><a href="/pages/contact">Contact Us</a></li>
+            {% endif %}
+          </ul>
+        </li>
+
+        <li class="footer-item">
+          <h3><span>Get in Touch</span></h3>
+          <div class="get_in_touch">
+            <p>{{ section.settings.address }}</p>
+            <p><a href="tel:{{ section.settings.phone | remove: ' ' }}">{{ section.settings.phone }}</a></p>
+            <p><a href="mailto:{{ section.settings.email }}">{{ section.settings.email }}</a></p>
+            <p><a href="mailto:{{ section.settings.sales_email }}">{{ section.settings.sales_email }}</a></p>
+          </div>
+          <ul class="social_icons">
+            <li><a href="{{ section.settings.facebook_url | default: '#' }}" aria-label="Facebook">f</a></li>
+            <li><a href="{{ section.settings.twitter_url | default: '#' }}" aria-label="Twitter">x</a></li>
+            <li><a href="{{ section.settings.instagram_url | default: '#' }}" aria-label="Instagram">ig</a></li>
+            <li><a href="{{ section.settings.linkedin_url | default: '#' }}" aria-label="LinkedIn">in</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer_middl">
+      <div class="wrapper">
         <ul>
-          {% if section.settings.footer_menu != blank and linklists[section.settings.footer_menu].links.size > 0 %}
-            {% for link in linklists[section.settings.footer_menu].links %}
-              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
-            {% endfor %}
-          {% else %}
-            <li><a href="{{ routes.root_url }}">Home</a></li>
-            <li><a href="/pages/about-us">About Us</a></li>
-            <li><a href="/pages/spares-and-repairs">Dyson Repairs and Servicing</a></li>
-            <li><a href="/policies/refund-policy">Refund Policy</a></li>
-            <li><a href="/pages/contact">Contact Us</a></li>
-          {% endif %}
+          <li><a href="/policies/terms-of-service">Terms of Use</a></li>
+          <li><a href="/policies/terms-of-service">Terms and Conditions</a></li>
+          <li><a href="/policies/privacy-policy">Privacy Policy</a></li>
+          <li><a href="/policies/refund-policy">Returns and Refunds</a></li>
         </ul>
-      </div>
-
-      <div>
-        <h2>Get in Touch</h2>
-        <p>{{ section.settings.address }}</p>
-        <p>{{ section.settings.phone }}</p>
-        <p><a href="mailto:{{ section.settings.email }}">{{ section.settings.email }}</a></p>
-        <div class="social-row">
-          <a href="#" aria-label="Facebook">f</a>
-          <a href="#" aria-label="Instagram">◎</a>
-          <a href="#" aria-label="YouTube">▶</a>
-          <a href="#" aria-label="X">x</a>
-        </div>
       </div>
     </div>
   </div>
-  <div class="footer-black">
-    <div class="page-width footer-bottom">
-      <span>Terms of Use</span>
-      <span>Terms and Conditions</span>
-      <span>Privacy Policy</span>
-      <span>Returns and Refunds</span>
-      <strong>© {{ 'now' | date: '%Y' }} {{ shop.name | default: 'The Vacuum Wizard' }}</strong>
+
+  <div class="footer_btm">
+    <div class="wrapper">
+      <p>The Vacuum Wizard is a Trading Name Of Bristolian Commerce Limited.<span>Registered in the UK</span></p>
+      <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name | default: 'The Vacuum Wizard' }}</p>
+      <p>Registration No: {{ section.settings.registration_number }}<span>VAT Number: {{ section.settings.vat_number }}</span></p>
     </div>
   </div>
 </footer>
@@ -64,7 +86,7 @@
       "type": "text",
       "id": "address",
       "label": "Address",
-      "default": "Tindale Works, Marsh Lane, Temple Cloud, Bristol BS39 5AZ"
+      "default": "Trident Works, Marsh Lane, Temple Cloud, Bristol BS39 5AZ"
     },
     {
       "type": "text",
@@ -76,7 +98,45 @@
       "type": "text",
       "id": "email",
       "label": "Email",
+      "default": "info@thevacuumwizard.co.uk"
+    },
+    {
+      "type": "text",
+      "id": "sales_email",
+      "label": "Sales email",
       "default": "sales@thevacuumwizard.co.uk"
+    },
+    {
+      "type": "text",
+      "id": "registration_number",
+      "label": "Registration number",
+      "default": "9837814"
+    },
+    {
+      "type": "text",
+      "id": "vat_number",
+      "label": "VAT number",
+      "default": "GB9977813"
+    },
+    {
+      "type": "url",
+      "id": "facebook_url",
+      "label": "Facebook URL"
+    },
+    {
+      "type": "url",
+      "id": "twitter_url",
+      "label": "Twitter/X URL"
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "Instagram URL"
+    },
+    {
+      "type": "url",
+      "id": "linkedin_url",
+      "label": "LinkedIn URL"
     }
   ]
 }

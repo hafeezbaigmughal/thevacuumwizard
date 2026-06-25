@@ -2,10 +2,12 @@ document.documentElement.classList.remove('no-js');
 
 const navToggle = document.querySelector('.nav-toggle');
 const navMenu = document.querySelector('#HeaderMenu');
+const navShell = document.querySelector('#header');
 
 if (navToggle && navMenu) {
   navToggle.addEventListener('click', () => {
     const isOpen = navMenu.classList.toggle('is-open');
+    navShell?.classList.toggle('is-open', isOpen);
     navToggle.setAttribute('aria-expanded', String(isOpen));
   });
 }
@@ -34,6 +36,7 @@ document.querySelectorAll('[data-product-tabs]').forEach((tabs) => {
         const isActive = item === button;
         item.classList.toggle('is-active', isActive);
         item.setAttribute('aria-selected', String(isActive));
+        item.closest('li')?.classList.toggle('pruduct_category_currents', isActive);
       });
 
       panels.forEach((panel) => {

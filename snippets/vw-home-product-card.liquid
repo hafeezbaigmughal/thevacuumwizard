@@ -1,0 +1,63 @@
+{%- liquid
+  assign product_link = product.url | default: '#'
+  assign product_title = product.title | default: fallback_title | default: 'Dyson Genuine Battery Power Pack'
+  assign image_asset = fallback_image | default: 'home-product-v10-battery.jpg'
+  assign image_width = image_width | default: 800
+  assign image_height = image_height | default: 800
+  assign media_class = media_class | default: 'best_product_details_pic'
+  assign text_class = text_class | default: 'best_product_details_text'
+  assign wrapper_class = wrapper_class | default: ''
+-%}
+
+<li>
+  {% if wrapper_class != blank %}<div class="{{ wrapper_class }}">{% endif %}
+    <div class="{{ media_class }}">
+      <a href="{{ product_link }}" aria-label="{{ product_title | escape }}">
+        {% if product != blank and product.featured_image %}
+          {{ product.featured_image | image_url: width: 640 | image_tag: loading: 'lazy', alt: product_title }}
+        {% else %}
+          <img src="{{ image_asset | asset_url }}" alt="{{ product_title | escape }}" loading="lazy" width="{{ image_width }}" height="{{ image_height }}">
+        {% endif %}
+      </a>
+      <div class="over_lay">
+        <a class="button" href="{{ product_link }}">View Product</a>
+      </div>
+    </div>
+
+    <div class="{{ text_class }}">
+      <div class="book_name">
+        <a href="{{ product_link }}">{{ product_title }}</a>
+      </div>
+
+      <h3 class="prize">
+        {% if product != blank %}
+          {{ product.price | money }}
+          {% if product.compare_at_price > product.price %}
+            <span>{{ product.compare_at_price | money }}</span>
+          {% endif %}
+        {% else %}
+          {{ fallback_price | default: '&pound; 89.99' }}
+        {% endif %}
+      </h3>
+
+      <div class="add_waslist">
+        {% if product != blank and product.available %}
+          <form method="post" action="{{ routes.cart_add_url }}">
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+            <button class="button product_type_simple add_to_cart_button" type="submit" aria-label="Add {{ product_title | escape }} to cart">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2Zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2ZM6.2 6l.9 5.3c.2 1 1 1.7 2 1.7h7.4c.9 0 1.7-.6 1.9-1.5L20 6H6.2ZM5.8 4H21c.6 0 1 .5.9 1.1l-1.6 6.9c-.4 1.8-2 3-3.8 3H9.1c-2 0-3.6-1.4-4-3.3L3.9 4.9 2 4.5V3h2.6c.6 0 1.1.4 1.2 1Z"/>
+              </svg>
+            </button>
+          </form>
+        {% else %}
+          <a class="button product_type_simple add_to_cart_button" href="{{ product_link }}" aria-label="View {{ product_title | escape }}">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2Zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2ZM6.2 6l.9 5.3c.2 1 1 1.7 2 1.7h7.4c.9 0 1.7-.6 1.9-1.5L20 6H6.2ZM5.8 4H21c.6 0 1 .5.9 1.1l-1.6 6.9c-.4 1.8-2 3-3.8 3H9.1c-2 0-3.6-1.4-4-3.3L3.9 4.9 2 4.5V3h2.6c.6 0 1.1.4 1.2 1Z"/>
+            </svg>
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  {% if wrapper_class != blank %}</div>{% endif %}
+</li>
