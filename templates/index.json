@@ -1,77 +1,216 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero": {
       "type": "home-hero",
       "settings": {
+        "background_image": "shopify://shop_images/vacuum_banner_home_page_18_1_2020.webp",
+        "accessibility_label": "The independent Dyson hand held vacuum specialists",
+        "heading": "The Independent",
+        "emphasis": "Dyson Hand Held",
+        "accent_text": "Vacuum Specialists",
+        "shop_label": "Shop now",
         "shop_link": "/collections/all",
+        "contact_label": "Call us now",
         "contact_link": "/pages/contact-us"
       }
     },
     "models": {
       "type": "home-models",
       "blocks": {
-        "model_v6": { "type": "model", "settings": { "title": "Dyson V6", "collection": "dysonv6" } },
-        "model_v7": { "type": "model", "settings": { "title": "Dyson V7", "collection": "dysonv7" } },
-        "model_v8": { "type": "model", "settings": { "title": "Dyson V8", "collection": "dysonv8" } },
-        "model_v10": { "type": "model", "settings": { "title": "Dyson V10", "collection": "dysonv10" } },
-        "model_v11": { "type": "model", "settings": { "title": "Dyson V11", "collection": "dysonv11" } }
+        "model_v6": {
+          "type": "model",
+          "settings": {
+            "title": "Dyson V6",
+            "collection": "dysonv6"
+          }
+        },
+        "model_v7": {
+          "type": "model",
+          "settings": {
+            "title": "Dyson V7",
+            "collection": "dysonv7"
+          }
+        },
+        "model_v8": {
+          "type": "model",
+          "settings": {
+            "title": "Dyson V8",
+            "collection": "dysonv8"
+          }
+        },
+        "model_v10": {
+          "type": "model",
+          "settings": {
+            "title": "Dyson V10",
+            "collection": "dysonv10"
+          }
+        },
+        "model_v11": {
+          "type": "model",
+          "settings": {
+            "title": "Dyson V11",
+            "collection": "dysonv11"
+          }
+        }
       },
-      "block_order": ["model_v6", "model_v7", "model_v8", "model_v10", "model_v11"],
-      "settings": {}
+      "block_order": [
+        "model_v6",
+        "model_v7",
+        "model_v8",
+        "model_v10",
+        "model_v11"
+      ],
+      "settings": {
+        "heading": "Choose Your Model Below For Spare Parts",
+        "subheading": "Or Complete Machines"
+      }
     },
     "benefits": {
       "type": "home-benefits",
       "blocks": {
-        "delivery": { "type": "benefit", "settings": { "heading": "Express UK Delivery", "text": "On all orders only GBP 4.99" } },
-        "stock": { "type": "benefit", "settings": { "heading": "Large stock", "text": "of Dyson Hand Held Vacuum Parts" } },
-        "dispatch": { "type": "benefit", "settings": { "heading": "Next Business Day Delivery", "text": "On all UK orders placed before 2pm" } }
+        "delivery": {
+          "type": "benefit",
+          "settings": {
+            "heading": "Express UK Delivery",
+            "text": "On all orders only GBP 4.99"
+          }
+        },
+        "stock": {
+          "type": "benefit",
+          "settings": {
+            "heading": "Large stock",
+            "text": "of Dyson Hand Held Vacuum Parts"
+          }
+        },
+        "dispatch": {
+          "type": "benefit",
+          "settings": {
+            "heading": "Next Business Day Delivery",
+            "text": "On all UK orders placed before 2pm"
+          }
+        }
       },
-      "block_order": ["delivery", "stock", "dispatch"],
-      "settings": {}
+      "block_order": [
+        "delivery",
+        "stock",
+        "dispatch"
+      ],
+      "settings": {
+        "heading": "Why",
+        "accent_text": "Choose Us"
+      }
     },
     "about": {
       "type": "home-about",
-      "settings": { "link": "/pages/about-us" }
+      "settings": {
+        "heading": "The Vacuum Wizard - Dyson Vacuum Spare Parts Online Store",
+        "text": "<p>The Vacuum Wizard are independent specialists in Dyson hand held vacuum cleaners and spare parts. Our online store carries batteries, chargers, motors, filters and accessories for popular Dyson models.</p><p>We stock carefully selected parts and provide quick UK delivery for customers who want dependable repair solutions.</p>",
+        "link_label": "About us",
+        "link": "/pages/about-us"
+      }
     },
     "best_sellers": {
       "type": "home-best-sellers",
-      "settings": { "collection": "best-sellers", "products_to_show": 6 }
+      "settings": {
+        "heading": "Best",
+        "accent_text": "Sellers",
+        "collection": "best-sellers",
+        "products_to_show": 6
+      }
     },
     "product_tabs": {
       "type": "home-product-tabs",
       "settings": {
+        "accessibility_label": "Homepage product groups",
+        "first_label": "Featured Products",
         "first_collection": "all",
+        "first_limit": 8,
+        "second_label": "Latest Products",
         "second_collection": "all",
-        "third_collection": "all"
+        "second_limit": 8,
+        "third_label": "Vacuum Products",
+        "third_collection": "all",
+        "third_limit": 8
       }
     },
     "shipping": {
       "type": "home-shipping",
       "settings": {
+        "heading": "Next Working Day Shipping On All Orders Only GBP 4.99",
+        "primary_label": "Shop now",
         "primary_link": "/collections/all",
+        "secondary_label": "Contact us",
         "secondary_link": "/pages/contact-us"
       }
     },
     "related": {
       "type": "home-related-products",
-      "settings": { "collection": "best-sellers", "products_to_show": 4 }
+      "settings": {
+        "heading": "Related",
+        "accent_text": "Products",
+        "collection": "best-sellers",
+        "products_to_show": 4
+      }
     },
     "reviews": {
       "type": "home-reviews",
-      "settings": {}
+      "settings": {
+        "heading": "Latest Reviews",
+        "text": "",
+        "link_label": "View more",
+        "link": ""
+      }
     },
     "sale": {
       "type": "home-sale-banner",
-      "settings": { "link": "/collections/all" }
+      "settings": {
+        "alt_text": "Current store promotion",
+        "link": "/collections/all"
+      }
     },
     "blog": {
       "type": "home-blog",
-      "settings": { "blog": "news", "articles_to_show": 3 }
+      "settings": {
+        "heading": "Blogs",
+        "blog": "news",
+        "articles_to_show": 3,
+        "excerpt_length": 150,
+        "read_more_label": "Read more...",
+        "show_view_all": true,
+        "view_all_label": "View more"
+      }
     },
     "seo": {
       "type": "home-seo-content",
-      "settings": {}
+      "settings": {
+        "heading_1": "Dyson Cordless Vacuum Accessories Online",
+        "text_1": "<p>Dyson cordless vacuum accessories are available online for customers who need reliable replacement parts, batteries, chargers and tools for home cleaning.</p>",
+        "heading_2": "Dyson Handheld Parts For Sale Online",
+        "text_2": "<p>The Vacuum Wizard supplies Dyson handheld spare parts for several popular cordless models, helping customers keep their machines working for longer.</p>"
+      }
     }
   },
-  "order": ["hero", "models", "benefits", "about", "best_sellers", "product_tabs", "shipping", "related", "reviews", "sale", "blog", "seo"]
+  "order": [
+    "hero",
+    "models",
+    "benefits",
+    "about",
+    "best_sellers",
+    "product_tabs",
+    "shipping",
+    "related",
+    "reviews",
+    "sale",
+    "blog",
+    "seo"
+  ]
 }
