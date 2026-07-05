@@ -1,1 +1,62 @@
-[]
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Vacuum Wizard",
+    "theme_version": "1.0.0",
+    "theme_author": "Hamza Khan",
+    "theme_documentation_url": "https://github.com/hafeezbaigmughal/thevacuumwizard",
+    "theme_support_url": "https://github.com/hafeezbaigmughal/thevacuumwizard/issues"
+  },
+  {
+    "name": "Brand",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon"
+      },
+      {
+        "type": "color",
+        "id": "accent_color",
+        "label": "Accent colour",
+        "default": "#f7192f"
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text colour",
+        "default": "#5a5a5a"
+      }
+    ]
+  },
+  {
+    "name": "Social media",
+    "settings": [
+      {
+        "type": "url",
+        "id": "social_facebook_link",
+        "label": "Facebook URL"
+      },
+      {
+        "type": "url",
+        "id": "social_instagram_link",
+        "label": "Instagram URL"
+      },
+      {
+        "type": "url",
+        "id": "social_x_link",
+        "label": "X URL"
+      },
+      {
+        "type": "url",
+        "id": "social_youtube_link",
+        "label": "YouTube URL"
+      },
+      {
+        "type": "url",
+        "id": "social_linkedin_link",
+        "label": "LinkedIn URL"
+      }
+    ]
+  }
+]

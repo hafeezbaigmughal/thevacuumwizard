@@ -2,7 +2,8 @@
   <header class="template-heading">
     <h1>Search</h1>
     <form action="{{ routes.search_url }}" method="get" role="search" class="search-form">
-      <input type="search" name="q" value="{{ search.terms | escape }}" placeholder="Search products">
+      <label class="visually-hidden" for="SearchPageInput">Search the store</label>
+      <input id="SearchPageInput" type="search" name="q" value="{{ search.terms | escape }}" placeholder="Search the store">
       <button class="button button--red" type="submit">Search</button>
     </form>
   </header>

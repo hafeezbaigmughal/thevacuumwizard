@@ -3,13 +3,44 @@
     {% assign article_alt = article.image.alt | default: article.title %}
     {{ article.image | image_url: width: 1200 | image_tag: loading: 'eager', alt: article_alt, class: 'article-page__image' }}
   {% endif %}
-  <time>{{ article.published_at | date: '%d %b %Y' }}</time>
+  <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%d %b %Y' }}</time>
   <h1>{{ article.title }}</h1>
+  {% if section.settings.show_author %}<p>By {{ article.author }}</p>{% endif %}
   <div class="rte">{{ article.content }}</div>
+
+  {% if blog.comments_enabled? %}
+    <section class="article-comments" id="comments">
+      <h2>Comments ({{ article.comments_count }})</h2>
+      {% paginate article.comments by 20 %}
+        {% for comment in article.comments %}
+          <article class="article-comment">
+            <div class="rte">{{ comment.content }}</div>
+            <p>{{ comment.author }} on <time datetime="{{ comment.created_at | date: '%Y-%m-%d' }}">{{ comment.created_at | date: '%d %b %Y' }}</time></p>
+          </article>
+        {% endfor %}
+        {% if paginate.pages > 1 %}<nav class="pagination" aria-label="Comment pagination">{{ paginate | default_pagination }}</nav>{% endif %}
+      {% endpaginate %}
+
+      {% form 'new_comment', article, class: 'comment-form' %}
+        {% if form.posted_successfully? %}<p class="form-status">Your comment was submitted{% if blog.moderated? %} and is awaiting approval{% endif %}.</p>{% endif %}
+        {{ form.errors | default_errors }}
+        <label for="CommentAuthor">Name</label>
+        <input id="CommentAuthor" type="text" name="comment[author]" value="{{ form.author }}" autocomplete="name" required>
+        <label for="CommentEmail">Email</label>
+        <input id="CommentEmail" type="email" name="comment[email]" value="{{ form.email }}" autocomplete="email" required>
+        <label for="CommentBody">Comment</label>
+        <textarea id="CommentBody" name="comment[body]" rows="6" required>{{ form.body }}</textarea>
+        <button class="button button--red" type="submit">Post comment</button>
+      {% endform %}
+    </section>
+  {% endif %}
 </article>
 
 {% schema %}
 {
-  "name": "Main article"
+  "name": "Main article",
+  "settings": [
+    { "type": "checkbox", "id": "show_author", "label": "Show author", "default": true }
+  ]
 }
 {% endschema %}

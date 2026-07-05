@@ -1,0 +1,37 @@
+<section class="page-width template-section">
+  <header class="template-heading"><h1>{{ section.settings.heading }}</h1></header>
+  {% paginate collections by section.settings.collections_per_page %}
+    <div class="collection-list-grid">
+      {% for collection in collections %}
+        {% unless collection.handle == 'frontpage' %}
+          <article class="collection-card">
+            <a href="{{ collection.url }}">
+              {% if collection.image %}
+                {{ collection.image | image_url: width: 720 | image_tag: loading: 'lazy', alt: collection.image.alt | default: collection.title }}
+              {% elsif collection.products.first.featured_image %}
+                {{ collection.products.first.featured_image | image_url: width: 720 | image_tag: loading: 'lazy', alt: collection.title }}
+              {% else %}
+                {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+              {% endif %}
+              <h2>{{ collection.title }}</h2>
+              <p>{{ collection.products_count }} products</p>
+            </a>
+          </article>
+        {% endunless %}
+      {% else %}
+        <p>No collections found.</p>
+      {% endfor %}
+    </div>
+    {% if paginate.pages > 1 %}<nav class="pagination" aria-label="Pagination">{{ paginate | default_pagination }}</nav>{% endif %}
+  {% endpaginate %}
+</section>
+
+{% schema %}
+{
+  "name": "Collection list",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Collections" },
+    { "type": "range", "id": "collections_per_page", "label": "Collections per page", "min": 6, "max": 36, "step": 3, "default": 12 }
+  ]
+}
+{% endschema %}

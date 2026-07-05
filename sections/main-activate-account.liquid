@@ -1,0 +1,14 @@
+<section class="page-width template-section account-form">
+  <h1>Activate account</h1>
+  <p>Create a password to activate your account.</p>
+  {% form 'activate_customer_password' %}
+    {{ form.errors | default_errors }}
+    <label for="ActivatePassword">Password</label>
+    <input id="ActivatePassword" type="password" name="customer[password]" autocomplete="new-password" required>
+    <label for="ActivatePasswordConfirmation">Confirm password</label>
+    <input id="ActivatePasswordConfirmation" type="password" name="customer[password_confirmation]" autocomplete="new-password" required>
+    <button class="button button--red" type="submit">Activate account</button>
+    <button class="button button--outline" type="submit" name="decline">Decline invitation</button>
+  {% endform %}
+</section>
+{% schema %}{ "name": "Activate account" }{% endschema %}

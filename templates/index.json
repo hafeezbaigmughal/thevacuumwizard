@@ -16,7 +16,14 @@
         "model_v10",
         "model_v11"
       ],
-      "settings": {}
+      "settings": {
+        "best_sellers_collection": "best-sellers",
+        "featured_collection": "all",
+        "latest_collection": "all",
+        "vacuum_collection": "all",
+        "related_collection": "best-sellers",
+        "blog": "news"
+      }
     }
   },
   "order": [

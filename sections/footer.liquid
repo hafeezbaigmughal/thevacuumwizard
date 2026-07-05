@@ -5,13 +5,21 @@
         <li class="footer-item">
           <div class="ftr_logo">
             <a href="{{ routes.root_url }}">
-              <img src="{{ 'home-footer-award.png' | asset_url }}" alt="The Vacuum Wizard" width="200" height="200">
+              {% if section.settings.footer_logo != blank %}
+                {{ section.settings.footer_logo | image_url: width: 400 | image_tag: loading: 'lazy', alt: shop.name }}
+              {% else %}
+                <img src="{{ 'home-footer-award.png' | asset_url }}" alt="{{ shop.name | escape }}" width="200" height="200">
+              {% endif %}
             </a>
           </div>
-          <p>Dyson and the Dyson logo are trademarks of Dyson Technology Limited.</p>
-          <h5>
-            <img src="{{ 'home-payment-logos.png' | asset_url }}" alt="Accepted payment methods" width="354" height="34">
-          </h5>
+          {% if section.settings.trademark_text != blank %}<p>{{ section.settings.trademark_text }}</p>{% endif %}
+          {% if section.settings.show_payment_icons %}
+            <div class="footer-payment-icons" aria-label="Accepted payment methods">
+              {% for type in shop.enabled_payment_types %}
+                {{ type | payment_type_svg_tag }}
+              {% endfor %}
+            </div>
+          {% endif %}
         </li>
 
         <li class="footer-item">
@@ -23,13 +31,8 @@
               {% endfor %}
             {% else %}
               <li><a href="{{ routes.root_url }}">Home</a></li>
-              <li><a href="/pages/about-us">About Us</a></li>
-              <li><a href="/pages/spares-and-repairs">Dyson Repairs and Servicing</a></li>
-              <li><a href="{{ routes.collections_url }}/batteries">Battery Replacement</a></li>
-              <li><a href="/pages/testimonials">Testimonials</a></li>
+              <li><a href="{{ routes.all_products_collection_url }}">Products</a></li>
               <li><a href="{{ routes.cart_url }}">Cart</a></li>
-              <li><a href="/blogs/news">Blog</a></li>
-              <li><a href="/pages/contact">Contact Us</a></li>
             {% endif %}
           </ul>
         </li>
@@ -42,12 +45,20 @@
             <p><a href="mailto:{{ section.settings.email }}">{{ section.settings.email }}</a></p>
             <p><a href="mailto:{{ section.settings.sales_email }}">{{ section.settings.sales_email }}</a></p>
           </div>
-          <ul class="social_icons">
-            <li><a href="{{ section.settings.facebook_url | default: '#' }}" aria-label="Facebook">f</a></li>
-            <li><a href="{{ section.settings.twitter_url | default: '#' }}" aria-label="Twitter">x</a></li>
-            <li><a href="{{ section.settings.instagram_url | default: '#' }}" aria-label="Instagram">ig</a></li>
-            <li><a href="{{ section.settings.linkedin_url | default: '#' }}" aria-label="LinkedIn">in</a></li>
-          </ul>
+          {%- liquid
+            assign facebook_url = section.settings.facebook_url | default: settings.social_facebook_link
+            assign twitter_url = section.settings.twitter_url | default: settings.social_x_link
+            assign instagram_url = section.settings.instagram_url | default: settings.social_instagram_link
+            assign linkedin_url = section.settings.linkedin_url | default: settings.social_linkedin_link
+          -%}
+          {% if facebook_url != blank or twitter_url != blank or instagram_url != blank or linkedin_url != blank %}
+            <ul class="social_icons">
+              {% if facebook_url != blank %}<li><a href="{{ facebook_url }}" aria-label="Facebook" rel="noopener" target="_blank">f</a></li>{% endif %}
+              {% if twitter_url != blank %}<li><a href="{{ twitter_url }}" aria-label="X" rel="noopener" target="_blank">x</a></li>{% endif %}
+              {% if instagram_url != blank %}<li><a href="{{ instagram_url }}" aria-label="Instagram" rel="noopener" target="_blank">ig</a></li>{% endif %}
+              {% if linkedin_url != blank %}<li><a href="{{ linkedin_url }}" aria-label="LinkedIn" rel="noopener" target="_blank">in</a></li>{% endif %}
+            </ul>
+          {% endif %}
         </li>
       </ul>
     </div>
@@ -55,10 +66,9 @@
     <div class="footer_middl">
       <div class="wrapper">
         <ul>
-          <li><a href="/policies/terms-of-service">Terms of Use</a></li>
-          <li><a href="/policies/terms-of-service">Terms and Conditions</a></li>
-          <li><a href="/policies/privacy-policy">Privacy Policy</a></li>
-          <li><a href="/policies/refund-policy">Returns and Refunds</a></li>
+          {% for policy in shop.policies %}
+            {% if policy != blank %}<li><a href="{{ policy.url }}">{{ policy.title }}</a></li>{% endif %}
+          {% endfor %}
         </ul>
       </div>
     </div>
@@ -81,6 +91,23 @@
       "type": "link_list",
       "id": "footer_menu",
       "label": "Footer menu"
+    },
+    {
+      "type": "image_picker",
+      "id": "footer_logo",
+      "label": "Footer logo"
+    },
+    {
+      "type": "textarea",
+      "id": "trademark_text",
+      "label": "Trademark text",
+      "default": "Dyson and the Dyson logo are trademarks of Dyson Technology Limited."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "Show enabled payment methods",
+      "default": true
     },
     {
       "type": "text",

@@ -1,0 +1,55 @@
+<section class="page-width template-section account-page customer-addresses" data-customer-addresses>
+  <h1>Your addresses</h1>
+  <a class="text-link" href="{{ routes.account_url }}">Return to account</a>
+
+  <details class="address-form-wrap">
+    <summary class="button button--red">Add a new address</summary>
+    {% form 'customer_address', customer.new_address, class: 'address-form' %}
+      {{ form.errors | default_errors }}
+      <label for="AddressFirstNameNew">First name</label><input id="AddressFirstNameNew" type="text" name="address[first_name]" autocomplete="given-name">
+      <label for="AddressLastNameNew">Last name</label><input id="AddressLastNameNew" type="text" name="address[last_name]" autocomplete="family-name">
+      <label for="AddressCompanyNew">Company</label><input id="AddressCompanyNew" type="text" name="address[company]" autocomplete="organization">
+      <label for="Address1New">Address</label><input id="Address1New" type="text" name="address[address1]" autocomplete="address-line1" required>
+      <label for="Address2New">Apartment, suite, etc.</label><input id="Address2New" type="text" name="address[address2]" autocomplete="address-line2">
+      <label for="AddressCityNew">City</label><input id="AddressCityNew" type="text" name="address[city]" autocomplete="address-level2" required>
+      <label for="AddressCountryNew">Country</label><select id="AddressCountryNew" name="address[country]" data-address-country data-default="{{ form.country }}">{{ all_country_option_tags }}</select>
+      <div data-address-province-wrap><label for="AddressProvinceNew">Province</label><select id="AddressProvinceNew" name="address[province]" data-address-province data-default="{{ form.province }}"></select></div>
+      <label for="AddressZipNew">Postal code</label><input id="AddressZipNew" type="text" name="address[zip]" autocomplete="postal-code" required>
+      <label for="AddressPhoneNew">Phone</label><input id="AddressPhoneNew" type="tel" name="address[phone]" autocomplete="tel">
+      <label><input type="checkbox" name="address[default]" value="1"> Set as default address</label>
+      <button class="button button--red" type="submit">Add address</button>
+    {% endform %}
+  </details>
+
+  {% paginate customer.addresses by 10 %}
+    <div class="address-grid">
+      {% for address in customer.addresses %}
+        <article class="address-card">
+          {% if address == customer.default_address %}<strong>Default</strong>{% endif %}
+          {{ address | format_address }}
+          <details>
+            <summary class="text-link">Edit</summary>
+            {% form 'customer_address', address, class: 'address-form' %}
+              {{ form.errors | default_errors }}
+              <label for="AddressFirstName{{ form.id }}">First name</label><input id="AddressFirstName{{ form.id }}" type="text" name="address[first_name]" value="{{ form.first_name }}" autocomplete="given-name">
+              <label for="AddressLastName{{ form.id }}">Last name</label><input id="AddressLastName{{ form.id }}" type="text" name="address[last_name]" value="{{ form.last_name }}" autocomplete="family-name">
+              <label for="AddressCompany{{ form.id }}">Company</label><input id="AddressCompany{{ form.id }}" type="text" name="address[company]" value="{{ form.company }}" autocomplete="organization">
+              <label for="Address1{{ form.id }}">Address</label><input id="Address1{{ form.id }}" type="text" name="address[address1]" value="{{ form.address1 }}" required>
+              <label for="Address2{{ form.id }}">Apartment, suite, etc.</label><input id="Address2{{ form.id }}" type="text" name="address[address2]" value="{{ form.address2 }}" autocomplete="address-line2">
+              <label for="AddressCity{{ form.id }}">City</label><input id="AddressCity{{ form.id }}" type="text" name="address[city]" value="{{ form.city }}" required>
+              <label for="AddressCountry{{ form.id }}">Country</label><select id="AddressCountry{{ form.id }}" name="address[country]" data-address-country data-default="{{ form.country }}">{{ all_country_option_tags }}</select>
+              <div data-address-province-wrap><label for="AddressProvince{{ form.id }}">Province</label><select id="AddressProvince{{ form.id }}" name="address[province]" data-address-province data-default="{{ form.province }}"></select></div>
+              <label for="AddressZip{{ form.id }}">Postal code</label><input id="AddressZip{{ form.id }}" type="text" name="address[zip]" value="{{ form.zip }}" required>
+              <label for="AddressPhone{{ form.id }}">Phone</label><input id="AddressPhone{{ form.id }}" type="tel" name="address[phone]" value="{{ form.phone }}">
+              <label><input type="checkbox" name="address[default]" value="1" {% if address == customer.default_address %}checked{% endif %}> Set as default address</label>
+              <button class="button button--red" type="submit">Update address</button>
+            {% endform %}
+          </details>
+          <form method="post" action="{{ address.url }}"><input type="hidden" name="_method" value="delete"><button class="text-link" type="submit">Delete</button></form>
+        </article>
+      {% endfor %}
+    </div>
+    {% if paginate.pages > 1 %}<nav class="pagination" aria-label="Pagination">{{ paginate | default_pagination }}</nav>{% endif %}
+  {% endpaginate %}
+</section>
+{% schema %}{ "name": "Customer addresses" }{% endschema %}

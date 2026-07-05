@@ -1,0 +1,36 @@
+<section class="page-width template-section contact-page">
+  <header class="template-heading">
+    <h1>{{ page.title }}</h1>
+    {% if page.content != blank %}<div class="rte">{{ page.content }}</div>{% endif %}
+  </header>
+
+  {% form 'contact', class: 'contact-form' %}
+    {% if form.posted_successfully? %}<p class="form-status" tabindex="-1">Thank you. We will get back to you shortly.</p>{% endif %}
+    {{ form.errors | default_errors }}
+    <div class="form-grid">
+      <div>
+        <label for="ContactName">Name</label>
+        <input id="ContactName" type="text" name="contact[name]" value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}" autocomplete="name">
+      </div>
+      <div>
+        <label for="ContactEmail">Email <span aria-hidden="true">*</span></label>
+        <input id="ContactEmail" type="email" name="contact[email]" value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}" autocomplete="email" required>
+      </div>
+      <div>
+        <label for="ContactPhone">Phone</label>
+        <input id="ContactPhone" type="tel" name="contact[phone]" value="{{ form.phone }}" autocomplete="tel">
+      </div>
+      <div>
+        <label for="ContactSubject">Subject</label>
+        <input id="ContactSubject" type="text" name="contact[subject]" value="{{ form.subject }}">
+      </div>
+    </div>
+    <label for="ContactBody">Message <span aria-hidden="true">*</span></label>
+    <textarea id="ContactBody" name="contact[body]" rows="8" required>{{ form.body }}</textarea>
+    <button class="button button--red" type="submit">Send message</button>
+  {% endform %}
+</section>
+
+{% schema %}
+{ "name": "Contact form" }
+{% endschema %}

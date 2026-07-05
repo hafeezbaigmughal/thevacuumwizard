@@ -1,0 +1,25 @@
+{% layout none %}
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Gift card | {{ shop.name | escape }}</title>
+    {{ 'theme.css' | asset_url | stylesheet_tag }}
+    {{ content_for_header }}
+  </head>
+  <body class="gift-card-page">
+    <main class="gift-card">
+      <a href="{{ routes.root_url }}"><img src="{{ 'home-vacuum-logo.png' | asset_url }}" alt="{{ shop.name | escape }}" width="212" height="107"></a>
+      <h1>Gift card</h1>
+      <p class="gift-card__value">{{ gift_card.balance | money_with_currency }}</p>
+      {% if gift_card.enabled == false or gift_card.expired %}<p>This gift card is no longer valid.</p>{% endif %}
+      {% if gift_card.expires_on %}<p>Expires {{ gift_card.expires_on | date: '%d %B %Y' }}</p>{% endif %}
+      <p>Use this code at checkout:</p>
+      <input type="text" value="{{ gift_card.code | format_code }}" readonly aria-label="Gift card code" onclick="this.select()">
+      <a class="button button--red" href="{{ routes.root_url }}">Continue shopping</a>
+      {% if gift_card.pass_url %}<a class="text-link" href="{{ gift_card.pass_url }}">Add to Apple Wallet</a>{% endif %}
+    </main>
+  </body>
+</html>

@@ -11,7 +11,7 @@
         {% if product.featured_image %}
           {{ product.featured_image | image_url: width: 1000 | image_tag: loading: 'eager', alt: product_alt, id: 'ProductMainImage' }}
         {% else %}
-          <img id="ProductMainImage" src="{{ 'vacuum-wizard-product-a.png' | asset_url }}" alt="{{ product.title | escape }}" width="335" height="255">
+          {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
         {% endif %}
       </div>
 
@@ -30,13 +30,9 @@
     <div class="product-detail__summary">
       <h1>{{ product.title }}</h1>
 
-      <div class="product-detail__rating">
-        <span aria-hidden="true">*****</span>
-        <a href="#ProductReviews">Reviews</a>
-      </div>
-
       <div class="product-detail__price" data-product-price>
         {{ current_variant.price | money }}
+        <s data-product-compare-price {% unless current_variant.compare_at_price > current_variant.price %}hidden{% endunless %}>{% if current_variant.compare_at_price > current_variant.price %}{{ current_variant.compare_at_price | money }}{% endif %}</s>
         <small>Including VAT</small>
       </div>
 
@@ -77,9 +73,11 @@
               <option
                 value="{{ variant.id }}"
                 data-price="{{ variant.price | money }}"
+                data-compare-price="{% if variant.compare_at_price > variant.price %}{{ variant.compare_at_price | money }}{% endif %}"
                 data-available="{{ variant.available }}"
                 data-sku="{{ variant.sku | escape }}"
                 data-options="{{ variant.options | join: '||' | escape }}"
+                data-image="{% if variant.featured_image %}{{ variant.featured_image | image_url: width: 1000 }}{% endif %}"
                 {% if variant == current_variant %}selected{% endif %}
                 {% unless variant.available %}disabled{% endunless %}
               >
@@ -93,7 +91,7 @@
 
         <div class="product-detail__buy-row">
           <label for="Quantity-{{ section.id }}">Quantity</label>
-          <input id="Quantity-{{ section.id }}" type="number" name="quantity" value="1" min="1">
+          <input id="Quantity-{{ section.id }}" type="number" name="quantity" value="1" min="1" inputmode="numeric">
           <button class="button button--red product-detail__submit" type="submit" {% unless current_variant.available %}disabled{% endunless %} data-product-submit>
             {% if current_variant.available %}Add to Cart{% else %}Sold Out{% endif %}
           </button>
@@ -106,7 +104,9 @@
         {% endif %}
       {% endform %}
 
-      <a class="product-detail__wishlist" href="/pages/wishlist">Add to Wishlist</a>
+      {% if section.settings.wishlist_page != blank %}
+        <a class="product-detail__wishlist" href="{{ section.settings.wishlist_page.url }}">Add to Wishlist</a>
+      {% endif %}
 
       <div class="product-detail__meta">
         {% if current_variant.sku != blank %}
@@ -133,12 +133,11 @@
     <div class="product-tabs__nav" role="tablist">
       <button class="is-active" type="button" role="tab" aria-selected="true" data-product-tab-button="description">Description</button>
       <button type="button" role="tab" aria-selected="false" data-product-tab-button="additional">Additional information</button>
-      <button type="button" role="tab" aria-selected="false" data-product-tab-button="reviews">Reviews</button>
     </div>
 
     <div class="product-tabs__panel rte is-active" role="tabpanel" data-product-tab-panel="description">
       <h2>Description</h2>
-      {{ product.description }}
+        {% if product.description != blank %}{{ product.description }}{% else %}<p>No description is available for this product.</p>{% endif %}
     </div>
 
     <div class="product-tabs__panel" role="tabpanel" data-product-tab-panel="additional">
@@ -173,19 +172,11 @@
       </table>
     </div>
 
-    <div class="product-tabs__panel product-reviews" role="tabpanel" data-product-tab-panel="reviews" id="ProductReviews">
-      <h2>Reviews</h2>
-      <p>There are no reviews yet.</p>
-      <div class="product-reviews__form">
-        <h3>Be the first to review "{{ product.title }}"</h3>
-        <label>Your rating</label>
-        <div class="product-reviews__stars" aria-hidden="true">*****</div>
-        <label for="ReviewBody-{{ section.id }}">Your review</label>
-        <textarea id="ReviewBody-{{ section.id }}" rows="6"></textarea>
-        <button class="button button--red" type="button">Submit</button>
-      </div>
-    </div>
   </div>
+
+  {% for block in section.blocks %}
+    <div class="product-app-block" {{ block.shopify_attributes }}>{% render block %}</div>
+  {% endfor %}
 
   {% if section.settings.show_related_products and related_collection != blank %}
     <section class="product-related">
@@ -245,6 +236,17 @@
       "max": 8,
       "step": 1,
       "default": 4
+    },
+    {
+      "type": "page",
+      "id": "wishlist_page",
+      "label": "Wishlist page",
+      "info": "Leave blank unless a wishlist app or page is configured."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
     }
   ]
 }

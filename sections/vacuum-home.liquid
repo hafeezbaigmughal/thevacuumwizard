@@ -1,41 +1,13 @@
 {%- liquid
   assign shop_link = section.settings.shop_link | default: routes.all_products_collection_url
-  assign contact_link = section.settings.contact_link | default: '/pages/contact'
-  assign about_link = section.settings.about_link | default: '/pages/about-us'
-  assign reviews_link = section.settings.reviews_link | default: '/pages/reviews'
+  assign contact_link = section.settings.contact_link
+  assign about_link = section.settings.about_link
+  assign reviews_link = section.settings.reviews_link
 
   assign best_sellers_collection = section.settings.best_sellers_collection
-  if best_sellers_collection == blank
-    assign best_sellers_collection = collections['best-sellers']
-  endif
-  if best_sellers_collection == blank
-    assign best_sellers_collection = collections['frontpage']
-  endif
-  if best_sellers_collection == blank
-    assign best_sellers_collection = collections['all']
-  endif
-
   assign featured_collection = section.settings.featured_collection
-  if featured_collection == blank
-    assign featured_collection = collections['all']
-  endif
-
   assign latest_collection = section.settings.latest_collection
-  if latest_collection == blank
-    assign latest_collection = collections['latest-products']
-  endif
-  if latest_collection == blank
-    assign latest_collection = collections['all']
-  endif
-
   assign vacuum_collection = section.settings.vacuum_collection
-  if vacuum_collection == blank
-    assign vacuum_collection = collections['vacuum-products']
-  endif
-  if vacuum_collection == blank
-    assign vacuum_collection = collections['all']
-  endif
-
   assign related_collection = section.settings.related_collection
   if related_collection == blank
     assign related_collection = best_sellers_collection
@@ -49,15 +21,15 @@
 -%}
 
 <section class="banner_home" aria-label="{{ section.settings.hero_label | escape }}">
-  <img class="banner_home_img" src="{{ 'home-hero-bg.webp' | asset_url }}" alt="The Vacuum Wizard" width="1920" height="578">
+  {{ 'home-hero-bg.webp' | asset_url | image_tag: class: 'banner_home_img', preload: true, fetchpriority: 'high', alt: '', width: 1920, height: 578 }}
   <div class="captionBox">
     <div class="wrapper">
       <div class="caption">
         <div class="left-div">
-          <h1>The Independent <strong>Dyson Hand Held</strong> <span>Vacuum Specialists</span></h1>
+          <h1>{{ section.settings.hero_heading }} <strong>{{ section.settings.hero_emphasis }}</strong> <span>{{ section.settings.hero_accent }}</span></h1>
           <ul>
-            <li><a href="{{ shop_link }}">shop now</a></li>
-            <li><a href="{{ contact_link }}">Call Us Now</a></li>
+            <li><a href="{{ shop_link }}">{{ section.settings.shop_label }}</a></li>
+            {% if contact_link != blank %}<li><a href="{{ contact_link }}">{{ section.settings.contact_label }}</a></li>{% endif %}
           </ul>
         </div>
       </div>
@@ -73,7 +45,7 @@
 
 <section class="modelparts">
   <div class="wrapper">
-    <h2 class="title_center2">Choose Your Model Below For Spare Parts <span>Or Complete Machines</span></h2>
+    <h2 class="title_center2">{{ section.settings.models_heading }} <span>{{ section.settings.models_subheading }}</span></h2>
     <ul id="modelparts_slider">
       {%- assign model_fallbacks = 'home-dyson-v6.jpg|home-dyson-v7.jpg|home-dyson-v8.jpg|home-dyson-v10.jpg|home-dyson-v11.jpg' | split: '|' -%}
       {%- assign model_index = 0 -%}
@@ -81,7 +53,7 @@
         {% if block.type == 'model' %}
           {% assign fallback = model_fallbacks[model_index] | default: 'home-dyson-v6.jpg' %}
           <li {{ block.shopify_attributes }}>
-            <a href="{{ block.settings.link | default: routes.all_products_collection_url }}">
+            {% if block.settings.link != blank %}<a href="{{ block.settings.link }}">{% endif %}
               <div class="modelparts_pic">
                 {% if block.settings.image != blank %}
                   {{ block.settings.image | image_url: width: 292 | image_tag: loading: 'lazy', alt: block.settings.title }}
@@ -90,7 +62,7 @@
                 {% endif %}
               </div>
               <div class="modelparts_text"><h3>{{ block.settings.title }}</h3></div>
-            </a>
+            {% if block.settings.link != blank %}</a>{% endif %}
           </li>
           {% assign model_index = model_index | plus: 1 %}
         {% endif %}
@@ -109,22 +81,22 @@
         <li>
           <div class="why_choose_us_item">
             <div class="why_choose_us_pic" aria-hidden="true"></div>
-            <h3>Express UK Delivery</h3>
-            <h4>On all orders only &pound;4.99</h4>
+            <h3>{{ section.settings.benefit_1_heading }}</h3>
+            <h4>{{ section.settings.benefit_1_text }}</h4>
           </div>
         </li>
         <li>
           <div class="why_choose_us_item">
             <div class="why_choose_us_pic" aria-hidden="true"></div>
-            <h3>Large stock</h3>
-            <h4>of Dyson Hand Held Vacuum Parts</h4>
+            <h3>{{ section.settings.benefit_2_heading }}</h3>
+            <h4>{{ section.settings.benefit_2_text }}</h4>
           </div>
         </li>
         <li>
           <div class="why_choose_us_item">
             <div class="why_choose_us_pic" aria-hidden="true"></div>
-            <h3>Next Business Day Delivery</h3>
-            <h4>On all UK orders placed before 2pm</h4>
+            <h3>{{ section.settings.benefit_3_heading }}</h3>
+            <h4>{{ section.settings.benefit_3_text }}</h4>
           </div>
         </li>
       </ul>
@@ -137,7 +109,7 @@
     <div class="about_vaccum_text">
       <h2>{{ section.settings.about_heading }}</h2>
       <div class="rte">{{ section.settings.about_text }}</div>
-      <a href="{{ about_link }}" class="btn1">About Us</a>
+      {% if about_link != blank %}<a href="{{ about_link }}" class="btn1">About Us</a>{% endif %}
     </div>
     <div class="about_vaccum_pic">
       {% if section.settings.about_image != blank %}
@@ -146,7 +118,7 @@
         <img src="{{ 'home-about.jpg' | asset_url }}" alt="Dyson vacuum in a home" loading="lazy" width="1594" height="1600">
       {% endif %}
       <div class="about_overlay">
-        <div class="about_vaccum_box"><a href="{{ about_link }}" class="btn1">About Us</a></div>
+        {% if about_link != blank %}<div class="about_vaccum_box"><a href="{{ about_link }}" class="btn1">About Us</a></div>{% endif %}
       </div>
     </div>
   </div>
@@ -162,12 +134,7 @@
             {% render 'vw-home-product-card', product: product, media_class: 'best_product_details_pic', text_class: 'best_product_details_text' %}
           {% endfor %}
         {% else %}
-          {% assign best_images = 'home-product-logo.png|home-product-v6-battery.jpg|home-product-v10-vacwiz.jpg|home-product-v10-battery.jpg|home-product-v11-battery.jpg|home-product-v11-battery.jpg' | split: '|' %}
-          {% assign best_titles = 'Dyson V15 Detect Total Clean Cordless Vacuum Cleaner|Dyson V6 Genuine Battery Power Pack 967810-21|Dyson V10 VacWiz Battery Power Pack 969352-02|Dyson V10 Genuine Battery Power Pack 969352-02|Dyson VacWiz V11 SV14 Battery Power Pack Replacement 970145-02|Dyson V11 SV14 Genuine Battery Power Pack 970145-02' | split: '|' %}
-          {% assign best_prices = '&pound; 499.99|&pound; 64.99|&pound; 52.99|&pound; 89.99|&pound; 58.99|&pound; 89.99' | split: '|' %}
-          {% for image in best_images %}
-            {% render 'vw-home-product-card', fallback_image: image, fallback_title: best_titles[forloop.index0], fallback_price: best_prices[forloop.index0], media_class: 'best_product_details_pic', text_class: 'best_product_details_text' %}
-          {% endfor %}
+          <li class="noproductincategory">Choose a Best Sellers collection in the theme editor.</li>
         {% endif %}
       </ul>
     </div>
@@ -191,10 +158,7 @@
                 {% render 'vw-home-product-card', product: product, wrapper_class: 'product_element_details', media_class: 'best_product_details_pic', text_class: 'best_product_details_text' %}
               {% endfor %}
             {% else %}
-              {% assign tab_images = 'home-product-logo.png|home-product-v10-battery.jpg|home-product-v11-battery.jpg|home-product-charger.jpg' | split: '|' %}
-              {% for image in tab_images %}
-                {% render 'vw-home-product-card', fallback_image: image, wrapper_class: 'product_element_details', media_class: 'best_product_details_pic', text_class: 'best_product_details_text' %}
-              {% endfor %}
+              <li class="noproductincategory">Choose a Featured Products collection in the theme editor.</li>
             {% endif %}
           </ul>
         </div>
@@ -240,7 +204,7 @@
       <h2>Next Working Day Shipping On All Orders Only &pound;4.99</h2>
       <ul>
         <li><a href="{{ shop_link }}" class="btn2">shop now</a></li>
-        <li><a href="{{ contact_link }}" class="btn2">Contact us</a></li>
+        {% if contact_link != blank %}<li><a href="{{ contact_link }}" class="btn2">Contact us</a></li>{% endif %}
       </ul>
     </div>
   </div>
@@ -256,30 +220,24 @@
             {% render 'vw-home-product-card', product: product, media_class: 'related_product_details_pic', text_class: 'related_product_details_text' %}
           {% endfor %}
         {% else %}
-          {% assign related_images = 'home-product-v10-battery.jpg|home-product-v11-battery.jpg|home-product-v11-battery.jpg|home-product-v11-click-battery.jpg' | split: '|' %}
-          {% assign related_titles = 'Dyson V10 Genuine Battery Power Pack 969352-02|Dyson VacWiz V11 SV14 Battery Power Pack Replacement 970145-02|Dyson V11 SV14 Genuine Battery Power Pack 970145-02|Dyson V11 and V15 Click-in Battery 970938-01' | split: '|' %}
-          {% assign related_prices = '&pound; 89.99|&pound; 58.99|&pound; 89.99|&pound; 104.99' | split: '|' %}
-          {% for image in related_images %}
-            {% render 'vw-home-product-card', fallback_image: image, fallback_title: related_titles[forloop.index0], fallback_price: related_prices[forloop.index0], media_class: 'related_product_details_pic', text_class: 'related_product_details_text' %}
-          {% endfor %}
+          <li class="noproductincategory">Choose a Related Products collection in the theme editor.</li>
         {% endif %}
       </ul>
     </div>
   </div>
 </section>
 
-<section class="testimonial">
+{% if section.settings.reviews_text != blank %}<section class="testimonial">
   <div class="wrapper">
     <h2 class="title_center1"><span>latest Reviews</span></h2>
     <div class="testimonial_global">
       <div class="review-box">
-        <strong>Trustindex</strong>
-        <p>Trustindex verifies that the original source of the review is Google.</p>
+        <div class="rte">{{ section.settings.reviews_text }}</div>
       </div>
     </div>
-    <a class="rd_more btn3" href="{{ reviews_link }}">view more</a>
+    {% if reviews_link != blank %}<a class="rd_more btn3" href="{{ reviews_link }}">view more</a>{% endif %}
   </div>
-</section>
+</section>{% endif %}
 
 <section class="big_season_sale">
   <div class="wrapper">
@@ -291,15 +249,11 @@
   <div class="wrapper">
     <h2 class="title_center1"><span>Blogs</span></h2>
     <ul>
-      {% assign blog_images = 'home-blog-v7-battery.webp|home-blog-v7-troubleshooting.webp|home-blog-v6-battery.webp' | split: '|' %}
-      {% assign blog_titles = 'How to Replace Dyson V7 Battery?|Dyson V7 Troubleshooting: Common Issues and Solutions|How to Replace Dyson V6 Battery?' | split: '|' %}
-      {% assign blog_dates = '03 Jan 2025|12 Oct 2024|07 Sep 2024' | split: '|' %}
       {% assign selected_blog = section.settings.blog %}
       {% for article in selected_blog.articles limit: 3 %}
-        {% assign fallback_image = blog_images[forloop.index0] | default: 'home-blog-v7-battery.webp' %}
         <li>
           <div class="blog-item">
-            <a href="{{ article.url }}"><div class="blog_pic">{% if article.image %}{{ article.image | image_url: width: 1024 | image_tag: loading: 'lazy', alt: article.title }}{% else %}<img src="{{ fallback_image | asset_url }}" alt="{{ article.title | escape }}" loading="lazy" width="1024" height="628">{% endif %}</div></a>
+            <a href="{{ article.url }}"><div class="blog_pic">{% if article.image %}{{ article.image | image_url: width: 1024 | image_tag: loading: 'lazy', alt: article.title }}{% else %}{{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}{% endif %}</div></a>
             <div class="blog_text">
               <h5>{{ article.published_at | date: '%d %b %Y' }}</h5>
               <h3><a href="{{ article.url }}">{{ article.title }}</a></h3>
@@ -309,22 +263,10 @@
           </div>
         </li>
       {% else %}
-        {% for image in blog_images %}
-          <li>
-            <div class="blog-item">
-              <a href="/blogs/news"><div class="blog_pic"><img src="{{ image | asset_url }}" alt="{{ blog_titles[forloop.index0] | escape }}" loading="lazy" width="1024" height="628"></div></a>
-              <div class="blog_text">
-                <h5>{{ blog_dates[forloop.index0] }}</h5>
-                <h3><a href="/blogs/news">{{ blog_titles[forloop.index0] }}</a></h3>
-                <p>Helpful repair guidance and replacement advice for Dyson cordless vacuum owners.</p>
-                <a href="/blogs/news" class="rd_more">Read More...</a>
-              </div>
-            </div>
-          </li>
-        {% endfor %}
+        <li class="noproductincategory">Choose a blog in the theme editor.</li>
       {% endfor %}
     </ul>
-    <a class="rd_more btn3" href="{{ selected_blog.url | default: '/blogs/news' }}">view more</a>
+    {% if selected_blog != blank %}<a class="rd_more btn3" href="{{ selected_blog.url }}">view more</a>{% endif %}
   </div>
 </section>
 
@@ -348,6 +290,36 @@
       "default": "The independent Dyson hand held vacuum specialists"
     },
     {
+      "type": "text",
+      "id": "hero_heading",
+      "label": "Hero heading",
+      "default": "The Independent"
+    },
+    {
+      "type": "text",
+      "id": "hero_emphasis",
+      "label": "Hero emphasis",
+      "default": "Dyson Hand Held"
+    },
+    {
+      "type": "text",
+      "id": "hero_accent",
+      "label": "Hero accent text",
+      "default": "Vacuum Specialists"
+    },
+    {
+      "type": "text",
+      "id": "shop_label",
+      "label": "Shop button label",
+      "default": "Shop now"
+    },
+    {
+      "type": "text",
+      "id": "contact_label",
+      "label": "Contact button label",
+      "default": "Call us now"
+    },
+    {
       "type": "url",
       "id": "shop_link",
       "label": "Shop link"
@@ -362,6 +334,54 @@
       "id": "phone",
       "label": "Phone",
       "default": "03333 701 701"
+    },
+    {
+      "type": "text",
+      "id": "models_heading",
+      "label": "Models heading",
+      "default": "Choose Your Model Below For Spare Parts"
+    },
+    {
+      "type": "text",
+      "id": "models_subheading",
+      "label": "Models subheading",
+      "default": "Or Complete Machines"
+    },
+    {
+      "type": "text",
+      "id": "benefit_1_heading",
+      "label": "First benefit heading",
+      "default": "Express UK Delivery"
+    },
+    {
+      "type": "text",
+      "id": "benefit_1_text",
+      "label": "First benefit text",
+      "default": "On all orders only \u00a34.99"
+    },
+    {
+      "type": "text",
+      "id": "benefit_2_heading",
+      "label": "Second benefit heading",
+      "default": "Large stock"
+    },
+    {
+      "type": "text",
+      "id": "benefit_2_text",
+      "label": "Second benefit text",
+      "default": "of Dyson Hand Held Vacuum Parts"
+    },
+    {
+      "type": "text",
+      "id": "benefit_3_heading",
+      "label": "Third benefit heading",
+      "default": "Next Business Day Delivery"
+    },
+    {
+      "type": "text",
+      "id": "benefit_3_text",
+      "label": "Third benefit text",
+      "default": "On all UK orders placed before 2pm"
     },
     {
       "type": "text",
@@ -459,6 +479,12 @@
       "type": "url",
       "id": "reviews_link",
       "label": "Reviews link"
+    },
+    {
+      "type": "richtext",
+      "id": "reviews_text",
+      "label": "Reviews summary",
+      "info": "Leave blank to hide this section."
     },
     {
       "type": "blog",

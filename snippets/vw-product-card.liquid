@@ -1,29 +1,32 @@
-{%- liquid
-  assign fallback_image = fallback_image | default: 'vacuum-wizard-product-a.png'
-  assign fallback_title = fallback_title | default: 'Dyson V10 Genuine Battery Power Pack'
-  assign fallback_price = fallback_price | default: '&pound; 89.99'
-  assign product_alt = product.featured_image.alt | default: product.title
-  assign product_link = product.url | default: '#'
--%}
-
-<article class="product-card">
-  <a class="product-card__media" href="{{ product_link }}">
-    {% if product != blank and product.featured_image %}
-      {{ product.featured_image | image_url: width: 520 | image_tag: loading: 'lazy', alt: product_alt }}
-    {% else %}
-      <img src="{{ fallback_image | asset_url }}" alt="{{ fallback_title | escape }}" loading="lazy" width="335" height="255">
-    {% endif %}
-    <span class="product-card__badge" aria-hidden="true">+</span>
-  </a>
-  <div class="product-card__body">
-    <h3><a href="{{ product_link }}">{{ product.title | default: fallback_title }}</a></h3>
-    <div class="product-card__price">
-      {% if product != blank %}
-        {{ product.price | money }}
+{% if product != blank %}
+  {%- liquid
+    assign product_alt = product.featured_image.alt | default: product.title
+    assign product_link = product.url
+    assign card_variant = product.selected_or_first_available_variant
+  -%}
+  <article class="product-card">
+    <a class="product-card__media" href="{{ product_link }}">
+      {% if product.featured_image %}
+        {{ product.featured_image | image_url: width: 520 | image_tag: loading: 'lazy', widths: '240, 360, 520', sizes: '(max-width: 640px) 50vw, 260px', alt: product_alt }}
       {% else %}
-        {{ fallback_price }}
+        {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+      {% endif %}
+    </a>
+    <div class="product-card__body">
+      <h3><a href="{{ product_link }}">{{ product.title }}</a></h3>
+      <div class="product-card__price">
+        {% if product.compare_at_price > product.price %}<s>{{ product.compare_at_price | money }}</s>{% endif %}
+        <span>{{ product.price | money }}{% if product.price_varies %} +{% endif %}</span>
+      </div>
+      {% if product.available and product.has_only_default_variant %}
+        <form method="post" action="{{ routes.cart_add_url }}">
+          <input type="hidden" name="id" value="{{ card_variant.id }}">
+          <input type="hidden" name="quantity" value="1">
+          <button class="product-card__cart" type="submit" aria-label="Add {{ product.title | escape }} to cart">+</button>
+        </form>
+      {% else %}
+        <a class="product-card__cart" href="{{ product_link }}" aria-label="{% if product.available %}Choose options for{% else %}View{% endif %} {{ product.title | escape }}">+</a>
       {% endif %}
     </div>
-    <button class="product-card__cart" type="button" aria-label="Add to cart">+</button>
-  </div>
-</article>
+  </article>
+{% endif %}

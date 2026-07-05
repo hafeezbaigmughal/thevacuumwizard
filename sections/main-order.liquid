@@ -1,0 +1,36 @@
+<section class="page-width template-section account-page order-page">
+  <a class="text-link" href="{{ routes.account_url }}">Return to account</a>
+  <h1>Order {{ order.name }}</h1>
+  <p>Placed on {{ order.created_at | date: '%d %B %Y' }}</p>
+  {% if order.cancelled %}<p class="form-status">Cancelled on {{ order.cancelled_at | date: '%d %B %Y' }}. {{ order.cancel_reason_label }}</p>{% endif %}
+
+  <div class="order-table-wrap">
+    <table class="order-table">
+      <thead><tr><th>Product</th><th>SKU</th><th>Price</th><th>Quantity</th><th>Total</th></tr></thead>
+      <tbody>
+        {% for line_item in order.line_items %}
+          <tr>
+            <td><a href="{{ line_item.url }}">{{ line_item.title }}</a>{% if line_item.fulfillment %}<small>Fulfilled {{ line_item.fulfillment.created_at | date: '%d %b %Y' }}</small>{% endif %}</td>
+            <td>{{ line_item.sku }}</td>
+            <td>{{ line_item.original_price | money }}</td>
+            <td>{{ line_item.quantity }}</td>
+            <td>{{ line_item.final_line_price | money }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr><th colspan="4">Subtotal</th><td>{{ order.line_items_subtotal_price | money }}</td></tr>
+        {% for discount in order.cart_level_discount_applications %}<tr><th colspan="4">{{ discount.title }}</th><td>-{{ discount.total_allocated_amount | money }}</td></tr>{% endfor %}
+        {% for shipping_method in order.shipping_methods %}<tr><th colspan="4">Shipping ({{ shipping_method.title }})</th><td>{{ shipping_method.price | money }}</td></tr>{% endfor %}
+        {% for tax_line in order.tax_lines %}<tr><th colspan="4">Tax ({{ tax_line.title }} {{ tax_line.rate | times: 100 }}%)</th><td>{{ tax_line.price | money }}</td></tr>{% endfor %}
+        <tr><th colspan="4">Total</th><td>{{ order.total_net_amount | money_with_currency }}</td></tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="order-addresses">
+    <div><h2>Billing address</h2><p>{{ order.financial_status_label }}</p>{{ order.billing_address | format_address }}</div>
+    {% if order.shipping_address %}<div><h2>Shipping address</h2><p>{{ order.fulfillment_status_label }}</p>{{ order.shipping_address | format_address }}</div>{% endif %}
+  </div>
+</section>
+{% schema %}{ "name": "Customer order" }{% endschema %}

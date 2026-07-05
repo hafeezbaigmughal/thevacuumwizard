@@ -1,7 +1,7 @@
 {%- liquid
   assign products_per_page = section.settings.products_per_page
   assign banner_image = section.settings.banner_image
-  assign collection_intro = collection.title | append: ' Parts'
+  assign collection_intro = section.settings.intro_heading | default: collection.title
   assign current_sort = collection.sort_by | default: collection.default_sort_by
   assign active_filter_count = 0
 
@@ -15,13 +15,11 @@
   endfor
 -%}
 
-<div class="innerBanner collection-banner">
+<div class="innerBanner collection-banner{% if banner_image == blank and collection.image == blank %} collection-banner--plain{% endif %}">
   {% if banner_image != blank %}
     {{ banner_image | image_url: width: 2100 | image_tag: loading: 'eager', alt: collection.title }}
   {% elsif collection.image %}
     {{ collection.image | image_url: width: 2100 | image_tag: loading: 'eager', alt: collection.title }}
-  {% else %}
-    <img src="{{ 'category-dyson-v7-banner.jpg' | asset_url }}" alt="{{ collection.title | escape }}" loading="eager" width="1920" height="366">
   {% endif %}
   <div class="banrcaptionBox">
     <div class="wrapper">
@@ -146,15 +144,17 @@
             <div class="pageWrap">
               <div class="pageContent">
                 <ul>
-                  {% for sidebar_collection in collections %}
-                    {% if sidebar_collection.products_count > 0 %}
+                  {% if section.settings.collection_menu != blank %}
+                    {% for menu_link in section.settings.collection_menu.links %}
                       <li>
-                        <a href="{{ sidebar_collection.url }}" {% if sidebar_collection.handle == collection.handle %}aria-current="page"{% endif %}>
-                          {{ sidebar_collection.title }}
+                        <a href="{{ menu_link.url }}" {% if menu_link.active %}aria-current="page"{% endif %}>
+                          {{ menu_link.title }}
                         </a>
                       </li>
-                    {% endif %}
-                  {% endfor %}
+                    {% endfor %}
+                  {% else %}
+                    <li>Choose a collection menu in the theme editor.</li>
+                  {% endif %}
                 </ul>
               </div>
             </div>
@@ -237,7 +237,7 @@
                     {% if product.featured_image %}
                       {{ product.featured_image | image_url: width: 520 | image_tag: loading: 'lazy', alt: product.title }}
                     {% else %}
-                      <img src="{{ 'category-product-fallback.webp' | asset_url }}" alt="{{ product.title | escape }}" loading="lazy" width="700" height="700">
+                      {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
                     {% endif %}
                   </a>
                   <div class="over_lay">
@@ -260,7 +260,7 @@
                   </h3>
 
                   <div class="add_waslist">
-                    {% if product.available %}
+                    {% if product.available and product.has_only_default_variant %}
                       <form method="post" action="{{ routes.cart_add_url }}">
                         <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
                         <button type="submit" aria-label="Add {{ product.title | escape }} to cart">
@@ -270,7 +270,7 @@
                         </button>
                       </form>
                     {% else %}
-                      <a href="{{ product.url | within: collection }}" aria-label="{{ product.title | escape }} is out of stock">
+                      <a href="{{ product.url | within: collection }}" aria-label="{% if product.available %}Choose options for{% else %}View{% endif %} {{ product.title | escape }}">
                         <svg viewBox="0 0 24 24" aria-hidden="true">
                           <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2Zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2ZM6.2 6l.9 5.3c.2 1 1 1.7 2 1.7h7.4c.9 0 1.7-.6 1.9-1.5L20 6H6.2ZM5.8 4H21c.6 0 1 .5.9 1.1l-1.6 6.9c-.4 1.8-2 3-3.8 3H9.1c-2 0-3.6-1.4-4-3.3L3.9 4.9 2 4.5V3h2.6c.6 0 1.1.4 1.2 1Z"/>
                         </svg>
@@ -305,6 +305,12 @@
       "label": "Banner image"
     },
     {
+      "type": "text",
+      "id": "intro_heading",
+      "label": "Intro heading",
+      "info": "Defaults to the collection title."
+    },
+    {
       "type": "range",
       "id": "products_per_page",
       "label": "Products per page",
@@ -330,6 +336,11 @@
       "id": "collection_list_heading",
       "label": "Collection list heading",
       "default": "Models"
+    },
+    {
+      "type": "link_list",
+      "id": "collection_menu",
+      "label": "Collection sidebar menu"
     }
   ]
 }

@@ -9,9 +9,18 @@
 
     <div class="top_header_right">
       <ul class="accountLinkBox">
-        <li><a href="{{ routes.account_login_url }}"><span>Log in</span></a></li>
-        <li><a href="{{ routes.account_register_url }}"><span>Register</span></a></li>
-        <li><a href="/pages/wishlist"><span>Wishlist</span></a></li>
+        {% if shop.customer_accounts_enabled %}
+          {% if customer %}
+            <li><a href="{{ routes.account_url }}"><span>My account</span></a></li>
+            <li><a href="{{ routes.account_logout_url }}"><span>Log out</span></a></li>
+          {% else %}
+            <li><a href="{{ routes.account_login_url }}"><span>Log in</span></a></li>
+            <li><a href="{{ routes.account_register_url }}"><span>Register</span></a></li>
+          {% endif %}
+        {% endif %}
+        {% if section.settings.wishlist_page != blank %}
+          <li><a href="{{ section.settings.wishlist_page.url }}"><span>{{ section.settings.wishlist_label }}</span></a></li>
+        {% endif %}
         <li>
           <a class="cart-contents" href="{{ routes.cart_url }}" title="View your shopping cart">
             <span>Cart</span>
@@ -49,10 +58,19 @@
               <li class="{% if link.links.size > 0 %}menu-item-has-children{% endif %}{% if link.active %} current-menu-item{% endif %}">
                 <a href="{{ link.url }}" {% if link.active %}aria-current="page"{% endif %}>{{ link.title }}</a>
                 {% if link.links.size > 0 %}
+                  <button class="submenu-toggle" type="button" aria-expanded="false" aria-label="Open {{ link.title | escape }} menu"></button>
                   <ul class="sub-menu">
                     {% for child_link in link.links %}
-                      <li class="{% if child_link.active %}current-menu-item{% endif %}">
+                      <li class="{% if child_link.links.size > 0 %}menu-item-has-children{% endif %}{% if child_link.active %}current-menu-item{% endif %}">
                         <a href="{{ child_link.url }}">{{ child_link.title }}</a>
+                        {% if child_link.links.size > 0 %}
+                          <button class="submenu-toggle" type="button" aria-expanded="false" aria-label="Open {{ child_link.title | escape }} menu"></button>
+                          <ul class="sub-menu">
+                            {% for grandchild_link in child_link.links %}
+                              <li><a href="{{ grandchild_link.url }}">{{ grandchild_link.title }}</a></li>
+                            {% endfor %}
+                          </ul>
+                        {% endif %}
                       </li>
                     {% endfor %}
                   </ul>
@@ -62,10 +80,6 @@
           {% else %}
             <li class="current-menu-item"><a href="{{ routes.root_url }}">Home</a></li>
             <li><a href="{{ routes.all_products_collection_url }}">Products</a></li>
-            <li><a href="/pages/services">Services</a></li>
-            <li><a href="/pages/about-us">About Us</a></li>
-            <li><a href="/blogs/news">Blog</a></li>
-            <li><a href="/pages/contact">Contact Us</a></li>
           {% endif %}
         </ul>
       </nav>
@@ -74,7 +88,8 @@
     <form action="{{ routes.search_url }}" method="get" role="search">
       <div class="search-wrapper">
         <div class="input-holder">
-          <input type="search" class="search-input" placeholder="Type to search" name="q">
+          <label class="visually-hidden" for="HeaderSearch">Search the store</label>
+          <input id="HeaderSearch" type="search" class="search-input" placeholder="Search products" name="q" value="{{ search.terms | escape }}" autocomplete="off">
           <button class="search-icon" type="submit" aria-label="Search"><span></span></button>
         </div>
       </div>
@@ -102,6 +117,18 @@
       "id": "phone",
       "label": "Phone number",
       "default": "03333 701 701"
+    },
+    {
+      "type": "page",
+      "id": "wishlist_page",
+      "label": "Wishlist page",
+      "info": "Leave blank unless a wishlist app or page is configured."
+    },
+    {
+      "type": "text",
+      "id": "wishlist_label",
+      "label": "Wishlist label",
+      "default": "Wishlist"
     }
   ]
 }

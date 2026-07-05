@@ -1,25 +1,28 @@
 <section class="page-width template-section account-page">
   <h1>Account</h1>
   <p>Welcome, {{ customer.first_name | default: customer.email }}.</p>
-  <a class="button button--outline" href="{{ routes.account_logout_url }}">Log out</a>
+  <div class="account-actions">
+    <a class="button button--outline" href="{{ routes.account_addresses_url }}">View addresses ({{ customer.addresses_count }})</a>
+    <a class="button button--outline" href="{{ routes.account_logout_url }}">Log out</a>
+  </div>
   <h2>Order history</h2>
-  {% if customer.orders.size > 0 %}
-    <div class="account-orders">
-      {% for order in customer.orders %}
-        <a href="{{ order.customer_url }}">
-          <strong>{{ order.name }}</strong>
-          <span>{{ order.created_at | date: '%d %b %Y' }}</span>
-          <span>{{ order.total_price | money }}</span>
-        </a>
-      {% endfor %}
-    </div>
-  {% else %}
-    <p>You have not placed any orders yet.</p>
-  {% endif %}
+  {% paginate customer.orders by 20 %}
+    {% if customer.orders.size > 0 %}
+      <div class="account-orders">
+        {% for order in customer.orders %}
+          <a href="{{ order.customer_url }}">
+            <strong>{{ order.name }}</strong>
+            <span>{{ order.created_at | date: '%d %b %Y' }}</span>
+            <span>{{ order.financial_status_label }}</span>
+            <span>{{ order.fulfillment_status_label }}</span>
+            <span>{{ order.total_price | money_with_currency }}</span>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>You have not placed any orders yet.</p>
+    {% endif %}
+    {% if paginate.pages > 1 %}<nav class="pagination" aria-label="Pagination">{{ paginate | default_pagination }}</nav>{% endif %}
+  {% endpaginate %}
 </section>
-
-{% schema %}
-{
-  "name": "Customer account"
-}
-{% endschema %}
+{% schema %}{ "name": "Customer account" }{% endschema %}

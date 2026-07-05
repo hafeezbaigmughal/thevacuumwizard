@@ -4,8 +4,18 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="theme-color" content="#f7192f">
+    <meta name="theme-color" content="{{ settings.accent_color | default: '#f7192f' }}">
     {% render 'meta-tags' %}
+    {% render 'structured-data' %}
+    {% if settings.favicon != blank %}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    {% endif %}
+    <style>
+      :root {
+        --vw-accent: {{ settings.accent_color | default: '#f7192f' }};
+        --vw-text: {{ settings.text_color | default: '#222222' }};
+      }
+    </style>
     {{ 'theme.css' | asset_url | stylesheet_tag }}
     {{ content_for_header }}
   </head>
