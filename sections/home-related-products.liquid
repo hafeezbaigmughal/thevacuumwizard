@@ -1,0 +1,28 @@
+<section class="related_products">
+  <div class="wrapper">
+    <h2 class="title_center1"><span>{{ section.settings.heading }} <strong>{{ section.settings.accent_text }}</strong></span></h2>
+    <div class="related_product_details">
+      <ul>
+        {% if section.settings.collection != blank and section.settings.collection.products.size > 0 %}
+          {% for product in section.settings.collection.products limit: section.settings.products_to_show %}
+            {% render 'vw-home-product-card', product: product, media_class: 'related_product_details_pic', text_class: 'related_product_details_text' %}
+          {% endfor %}
+        {% elsif request.design_mode %}
+          <li class="noproductincategory">Choose a collection in this section's settings.</li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Home related products",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Related" },
+    { "type": "text", "id": "accent_text", "label": "Accent text", "default": "Products" },
+    { "type": "collection", "id": "collection", "label": "Collection" },
+    { "type": "range", "id": "products_to_show", "label": "Products to show", "min": 3, "max": 8, "step": 1, "default": 4 }
+  ],
+  "presets": [{ "name": "Home related products" }]
+}
+{% endschema %}

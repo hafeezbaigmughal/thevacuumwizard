@@ -3325,14 +3325,14 @@ ul {
   overflow: hidden;
 }
 
-.modelparts #modelparts_slider {
+.modelparts .modelparts_slider {
   display: flex;
   flex-wrap: nowrap;
   gap: 18px;
   padding-top: 10px;
 }
 
-.modelparts #modelparts_slider li {
+.modelparts .modelparts_slider li {
   width: 18%;
   border: 1px solid #a1a1a1;
   border-radius: 5px;
@@ -3340,7 +3340,7 @@ ul {
   background: #fff;
 }
 
-.modelparts #modelparts_slider li .modelparts_pic {
+.modelparts .modelparts_slider li .modelparts_pic {
   padding: 10px;
   min-height: 132px;
   display: flex;
@@ -3348,16 +3348,16 @@ ul {
   justify-content: center;
 }
 
-.modelparts #modelparts_slider li .modelparts_pic img {
+.modelparts .modelparts_slider li .modelparts_pic img {
   margin: 0 auto;
 }
 
-.modelparts #modelparts_slider li .modelparts_text {
+.modelparts .modelparts_slider li .modelparts_text {
   padding: 10px 0;
   background: #efefef;
 }
 
-.modelparts #modelparts_slider li .modelparts_text h3 {
+.modelparts .modelparts_slider li .modelparts_text h3 {
   margin: 0;
   color: #f11c2e;
   font-family: "Roboto", Arial, sans-serif;
@@ -4218,14 +4218,14 @@ ul {
     padding-bottom: 0;
   }
 
-  .modelparts #modelparts_slider,
+  .modelparts .modelparts_slider,
   .why_choose_us ul,
   .about_vacuum .wrapper,
   .footer_btm .wrapper {
     display: block;
   }
 
-  .modelparts #modelparts_slider li,
+  .modelparts .modelparts_slider li,
   .why_choose_us ul li,
   .best_product_details ul li,
   .best_product_details ul li:nth-child(3),
@@ -4274,7 +4274,7 @@ ul {
     font-size: 16px;
   }
 
-  .modelparts #modelparts_slider li,
+  .modelparts .modelparts_slider li,
   .why_choose_us ul li,
   .best_product_details ul li,
   .best_product_details ul li:nth-child(3),

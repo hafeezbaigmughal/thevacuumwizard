@@ -23,6 +23,23 @@
   }
 </script>
 
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": {{ shop.name | json }},
+    "url": {{ request.origin | append: routes.root_url | json }},
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": {{ request.origin | append: routes.search_url | append: '?q={search_term_string}' | json }}
+      },
+      "query-input": "required name=search_term_string"
+    }
+  }
+</script>
+
 {% if request.page_type == 'product' %}
   <script type="application/ld+json">
     {{ product | structured_data }}

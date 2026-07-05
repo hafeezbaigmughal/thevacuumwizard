@@ -1,0 +1,55 @@
+<section class="modelparts">
+  <div class="wrapper">
+    <h2 class="title_center2">{{ section.settings.heading }} <span>{{ section.settings.subheading }}</span></h2>
+    <ul id="ModelParts-{{ section.id }}" class="modelparts_slider">
+      {%- assign model_fallbacks = 'home-dyson-v6.jpg|home-dyson-v7.jpg|home-dyson-v8.jpg|home-dyson-v10.jpg|home-dyson-v11.jpg' | split: '|' -%}
+      {% for block in section.blocks %}
+        {% assign fallback = model_fallbacks[forloop.index0] | default: 'home-dyson-v6.jpg' %}
+        {% assign model_collection = block.settings.collection %}
+        <li {{ block.shopify_attributes }}>
+          {% if model_collection != blank %}<a href="{{ model_collection.url }}">{% endif %}
+            <div class="modelparts_pic">
+              {% if block.settings.image != blank %}
+                {{ block.settings.image | image_url: width: 400 | image_tag: loading: 'lazy', widths: '200, 300, 400', sizes: '180px', alt: block.settings.image.alt | default: block.settings.title }}
+              {% elsif model_collection.image != blank %}
+                {{ model_collection.image | image_url: width: 400 | image_tag: loading: 'lazy', widths: '200, 300, 400', sizes: '180px', alt: model_collection.image.alt | default: block.settings.title }}
+              {% else %}
+                <img src="{{ fallback | asset_url }}" alt="{{ block.settings.title | escape }}" loading="lazy" width="146" height="148">
+              {% endif %}
+            </div>
+            <div class="modelparts_text"><h3>{{ block.settings.title }}</h3></div>
+          {% if model_collection != blank %}</a>{% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Home model links",
+  "max_blocks": 10,
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Choose Your Model Below For Spare Parts" },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "Or Complete Machines" }
+  ],
+  "blocks": [{
+    "type": "model",
+    "name": "Model",
+    "settings": [
+      { "type": "text", "id": "title", "label": "Title", "default": "Dyson V6" },
+      { "type": "image_picker", "id": "image", "label": "Image" },
+      { "type": "collection", "id": "collection", "label": "Collection" }
+    ]
+  }],
+  "presets": [{
+    "name": "Home model links",
+    "blocks": [
+      { "type": "model", "settings": { "title": "Dyson V6" } },
+      { "type": "model", "settings": { "title": "Dyson V7" } },
+      { "type": "model", "settings": { "title": "Dyson V8" } },
+      { "type": "model", "settings": { "title": "Dyson V10" } },
+      { "type": "model", "settings": { "title": "Dyson V11" } }
+    ]
+  }]
+}
+{% endschema %}

@@ -1,0 +1,49 @@
+{%- liquid
+  assign shop_link = section.settings.shop_link | default: routes.all_products_collection_url
+  assign hero_alt = section.settings.background_image.alt | default: section.settings.heading
+-%}
+<section class="banner_home" aria-label="{{ section.settings.accessibility_label | escape }}">
+  {% if section.settings.background_image != blank %}
+    {{ section.settings.background_image | image_url: width: 2400 | image_tag: class: 'banner_home_img', preload: true, fetchpriority: 'high', widths: '960, 1440, 1920, 2400', sizes: '100vw', alt: hero_alt }}
+  {% else %}
+    {{ 'home-hero-bg.webp' | asset_url | image_tag: class: 'banner_home_img', preload: true, fetchpriority: 'high', alt: '', width: 1920, height: 578 }}
+  {% endif %}
+  <div class="captionBox">
+    <div class="wrapper">
+      <div class="caption">
+        <div class="left-div">
+          <h1>{{ section.settings.heading }} <strong>{{ section.settings.emphasis }}</strong> <span>{{ section.settings.accent_text }}</span></h1>
+          <ul>
+            <li><a href="{{ shop_link }}">{{ section.settings.shop_label }}</a></li>
+            {% if section.settings.contact_link != blank %}<li><a href="{{ section.settings.contact_link }}">{{ section.settings.contact_label }}</a></li>{% endif %}
+          </ul>
+        </div>
+      </div>
+      <div class="right-div">
+        <ul>
+          <li>{% if section.settings.part_image %}{{ section.settings.part_image | image_url: width: 700 | image_tag: loading: 'eager', alt: section.settings.part_image.alt }}{% else %}<img src="{{ 'home-hero-part.webp' | asset_url }}" alt="" width="432" height="460">{% endif %}</li>
+          <li>{% if section.settings.battery_image %}{{ section.settings.battery_image | image_url: width: 450 | image_tag: loading: 'eager', alt: section.settings.battery_image.alt }}{% else %}<img src="{{ 'home-hero-battery.webp' | asset_url }}" alt="" width="225" height="314">{% endif %}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Home hero",
+  "settings": [
+    { "type": "image_picker", "id": "background_image", "label": "Background image" },
+    { "type": "image_picker", "id": "part_image", "label": "Part image" },
+    { "type": "image_picker", "id": "battery_image", "label": "Battery image" },
+    { "type": "text", "id": "accessibility_label", "label": "Accessibility label", "default": "The independent Dyson hand held vacuum specialists" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "The Independent" },
+    { "type": "text", "id": "emphasis", "label": "Emphasis", "default": "Dyson Hand Held" },
+    { "type": "text", "id": "accent_text", "label": "Accent text", "default": "Vacuum Specialists" },
+    { "type": "text", "id": "shop_label", "label": "Shop button label", "default": "Shop now" },
+    { "type": "url", "id": "shop_link", "label": "Shop button link" },
+    { "type": "text", "id": "contact_label", "label": "Contact button label", "default": "Call us now" },
+    { "type": "url", "id": "contact_link", "label": "Contact button link" }
+  ],
+  "presets": [{ "name": "Home hero" }]
+}
+{% endschema %}

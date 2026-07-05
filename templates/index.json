@@ -1,32 +1,77 @@
 {
   "sections": {
-    "main": {
-      "type": "vacuum-home",
-      "blocks": {
-        "model_v6": { "type": "model", "settings": { "title": "Dyson V6" } },
-        "model_v7": { "type": "model", "settings": { "title": "Dyson V7" } },
-        "model_v8": { "type": "model", "settings": { "title": "Dyson V8" } },
-        "model_v10": { "type": "model", "settings": { "title": "Dyson V10" } },
-        "model_v11": { "type": "model", "settings": { "title": "Dyson V11" } }
-      },
-      "block_order": [
-        "model_v6",
-        "model_v7",
-        "model_v8",
-        "model_v10",
-        "model_v11"
-      ],
+    "hero": {
+      "type": "home-hero",
       "settings": {
-        "best_sellers_collection": "best-sellers",
-        "featured_collection": "all",
-        "latest_collection": "all",
-        "vacuum_collection": "all",
-        "related_collection": "best-sellers",
-        "blog": "news"
+        "shop_link": "/collections/all",
+        "contact_link": "/pages/contact-us"
       }
+    },
+    "models": {
+      "type": "home-models",
+      "blocks": {
+        "model_v6": { "type": "model", "settings": { "title": "Dyson V6", "collection": "dysonv6" } },
+        "model_v7": { "type": "model", "settings": { "title": "Dyson V7", "collection": "dysonv7" } },
+        "model_v8": { "type": "model", "settings": { "title": "Dyson V8", "collection": "dysonv8" } },
+        "model_v10": { "type": "model", "settings": { "title": "Dyson V10", "collection": "dysonv10" } },
+        "model_v11": { "type": "model", "settings": { "title": "Dyson V11", "collection": "dysonv11" } }
+      },
+      "block_order": ["model_v6", "model_v7", "model_v8", "model_v10", "model_v11"],
+      "settings": {}
+    },
+    "benefits": {
+      "type": "home-benefits",
+      "blocks": {
+        "delivery": { "type": "benefit", "settings": { "heading": "Express UK Delivery", "text": "On all orders only GBP 4.99" } },
+        "stock": { "type": "benefit", "settings": { "heading": "Large stock", "text": "of Dyson Hand Held Vacuum Parts" } },
+        "dispatch": { "type": "benefit", "settings": { "heading": "Next Business Day Delivery", "text": "On all UK orders placed before 2pm" } }
+      },
+      "block_order": ["delivery", "stock", "dispatch"],
+      "settings": {}
+    },
+    "about": {
+      "type": "home-about",
+      "settings": { "link": "/pages/about-us" }
+    },
+    "best_sellers": {
+      "type": "home-best-sellers",
+      "settings": { "collection": "best-sellers", "products_to_show": 6 }
+    },
+    "product_tabs": {
+      "type": "home-product-tabs",
+      "settings": {
+        "first_collection": "all",
+        "second_collection": "all",
+        "third_collection": "all"
+      }
+    },
+    "shipping": {
+      "type": "home-shipping",
+      "settings": {
+        "primary_link": "/collections/all",
+        "secondary_link": "/pages/contact-us"
+      }
+    },
+    "related": {
+      "type": "home-related-products",
+      "settings": { "collection": "best-sellers", "products_to_show": 4 }
+    },
+    "reviews": {
+      "type": "home-reviews",
+      "settings": {}
+    },
+    "sale": {
+      "type": "home-sale-banner",
+      "settings": { "link": "/collections/all" }
+    },
+    "blog": {
+      "type": "home-blog",
+      "settings": { "blog": "news", "articles_to_show": 3 }
+    },
+    "seo": {
+      "type": "home-seo-content",
+      "settings": {}
     }
   },
-  "order": [
-    "main"
-  ]
+  "order": ["hero", "models", "benefits", "about", "best_sellers", "product_tabs", "shipping", "related", "reviews", "sale", "blog", "seo"]
 }

@@ -1,0 +1,58 @@
+<section class="pruduct_category" data-home-product-tabs>
+  <div class="wrapper">
+    <div class="tabs-containers">
+      <ul class="pruduct_category_tabs-menus" role="tablist" aria-label="{{ section.settings.accessibility_label | escape }}">
+        <li class="pruduct_category_currents"><button class="tab is-active" type="button" role="tab" aria-selected="true" data-home-product-tab="first">{{ section.settings.first_label }}</button></li>
+        <li><button class="tab" type="button" role="tab" aria-selected="false" data-home-product-tab="second">{{ section.settings.second_label }}</button></li>
+        <li><button class="tab" type="button" role="tab" aria-selected="false" data-home-product-tab="third">{{ section.settings.third_label }}</button></li>
+      </ul>
+      {%- assign tab_keys = 'first|second|third' | split: '|' -%}
+      {% for tab_key in tab_keys %}
+        {%- liquid
+          case tab_key
+            when 'first'
+              assign tab_collection = section.settings.first_collection
+              assign tab_limit = section.settings.first_limit
+            when 'second'
+              assign tab_collection = section.settings.second_collection
+              assign tab_limit = section.settings.second_limit
+            when 'third'
+              assign tab_collection = section.settings.third_collection
+              assign tab_limit = section.settings.third_limit
+          endcase
+        -%}
+        <div class="pruduct_category_tab-contents home-product-tabs__panel{% if forloop.first %} is-active{% endif %}" data-home-product-panel="{{ tab_key }}">
+          <div class="pruduct_category_dtls pruduct_category_tab_dtls_1">
+            <ul>
+              {% if tab_collection != blank and tab_collection.products.size > 0 %}
+                {% for product in tab_collection.products limit: tab_limit %}
+                  {% render 'vw-home-product-card', product: product, wrapper_class: 'product_element_details', media_class: 'best_product_details_pic', text_class: 'best_product_details_text' %}
+                {% endfor %}
+              {% elsif request.design_mode %}
+                <li class="noproductincategory">Choose a collection for this tab.</li>
+              {% endif %}
+            </ul>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Home product tabs",
+  "settings": [
+    { "type": "text", "id": "accessibility_label", "label": "Accessibility label", "default": "Homepage product groups" },
+    { "type": "text", "id": "first_label", "label": "First tab label", "default": "Featured Products" },
+    { "type": "collection", "id": "first_collection", "label": "First tab collection" },
+    { "type": "range", "id": "first_limit", "label": "First tab product limit", "min": 4, "max": 16, "step": 1, "default": 8 },
+    { "type": "text", "id": "second_label", "label": "Second tab label", "default": "Latest Products" },
+    { "type": "collection", "id": "second_collection", "label": "Second tab collection" },
+    { "type": "range", "id": "second_limit", "label": "Second tab product limit", "min": 4, "max": 16, "step": 1, "default": 8 },
+    { "type": "text", "id": "third_label", "label": "Third tab label", "default": "Vacuum Products" },
+    { "type": "collection", "id": "third_collection", "label": "Third tab collection" },
+    { "type": "range", "id": "third_limit", "label": "Third tab product limit", "min": 4, "max": 16, "step": 1, "default": 8 }
+  ],
+  "presets": [{ "name": "Home product tabs" }]
+}
+{% endschema %}

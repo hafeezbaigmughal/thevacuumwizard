@@ -1,0 +1,30 @@
+<section class="about_vacuum">
+  <div class="wrapper">
+    <div class="about_vaccum_text">
+      <h2>{{ section.settings.heading }}</h2>
+      <div class="rte">{{ section.settings.text }}</div>
+      {% if section.settings.link != blank %}<a href="{{ section.settings.link }}" class="btn1">{{ section.settings.link_label }}</a>{% endif %}
+    </div>
+    <div class="about_vaccum_pic">
+      {% if section.settings.image != blank %}
+        {{ section.settings.image | image_url: width: 900 | image_tag: loading: 'lazy', widths: '360, 540, 720, 900', sizes: '(max-width: 959px) 360px, 430px', alt: section.settings.image.alt | default: section.settings.heading }}
+      {% else %}
+        <img src="{{ 'home-about.jpg' | asset_url }}" alt="{{ section.settings.heading | escape }}" loading="lazy" width="1594" height="1600">
+      {% endif %}
+      {% if section.settings.link != blank %}<div class="about_overlay"><div class="about_vaccum_box"><a href="{{ section.settings.link }}" class="btn1">{{ section.settings.link_label }}</a></div></div>{% endif %}
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Home about",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "The Vacuum Wizard - Dyson Vacuum Spare Parts Online Store" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>The Vacuum Wizard are independent specialists in Dyson hand held vacuum cleaners and spare parts. Our online store carries batteries, chargers, motors, filters and accessories for popular Dyson models.</p><p>We stock carefully selected parts and provide quick UK delivery for customers who want dependable repair solutions.</p>" },
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "text", "id": "link_label", "label": "Button label", "default": "About us" },
+    { "type": "url", "id": "link", "label": "Button link" }
+  ],
+  "presets": [{ "name": "Home about" }]
+}
+{% endschema %}

@@ -1,0 +1,44 @@
+<section class="why_choose_us">
+  <div class="wrapper"><h2 class="title_center1"><span>{{ section.settings.heading }} <strong>{{ section.settings.accent_text }}</strong></span></h2></div>
+  <div class="why_choose_us_box">
+    <div class="wrapper">
+      <ul>
+        {% for block in section.blocks %}
+          <li {{ block.shopify_attributes }}>
+            <div class="why_choose_us_item">
+              <div class="why_choose_us_pic" aria-hidden="true"></div>
+              <h3>{{ block.settings.heading }}</h3>
+              <h4>{{ block.settings.text }}</h4>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Home benefits",
+  "max_blocks": 3,
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Why" },
+    { "type": "text", "id": "accent_text", "label": "Accent text", "default": "Choose Us" }
+  ],
+  "blocks": [{
+    "type": "benefit",
+    "name": "Benefit",
+    "settings": [
+      { "type": "text", "id": "heading", "label": "Heading", "default": "Express UK Delivery" },
+      { "type": "text", "id": "text", "label": "Text", "default": "On all orders only GBP 4.99" }
+    ]
+  }],
+  "presets": [{
+    "name": "Home benefits",
+    "blocks": [
+      { "type": "benefit", "settings": { "heading": "Express UK Delivery", "text": "On all orders only GBP 4.99" } },
+      { "type": "benefit", "settings": { "heading": "Large stock", "text": "of Dyson Hand Held Vacuum Parts" } },
+      { "type": "benefit", "settings": { "heading": "Next Business Day Delivery", "text": "On all UK orders placed before 2pm" } }
+    ]
+  }]
+}
+{% endschema %}

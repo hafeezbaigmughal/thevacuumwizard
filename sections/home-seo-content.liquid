@@ -1,0 +1,22 @@
+{% if section.settings.heading_1 != blank or section.settings.text_1 != blank or section.settings.heading_2 != blank or section.settings.text_2 != blank %}
+  <section class="best_seller seo-copy">
+    <div class="wrapper">
+      {% if section.settings.heading_1 != blank %}<h2 class="title_center1">{{ section.settings.heading_1 }}</h2>{% endif %}
+      {% if section.settings.text_1 != blank %}<div class="rte">{{ section.settings.text_1 }}</div>{% endif %}
+      {% if section.settings.heading_2 != blank %}<h2 class="title_center1">{{ section.settings.heading_2 }}</h2>{% endif %}
+      {% if section.settings.text_2 != blank %}<div class="rte">{{ section.settings.text_2 }}</div>{% endif %}
+    </div>
+  </section>
+{% endif %}
+{% schema %}
+{
+  "name": "Home SEO content",
+  "settings": [
+    { "type": "text", "id": "heading_1", "label": "First heading", "default": "Dyson Cordless Vacuum Accessories Online" },
+    { "type": "richtext", "id": "text_1", "label": "First text", "default": "<p>Dyson cordless vacuum accessories are available online for customers who need reliable replacement parts, batteries, chargers and tools for home cleaning.</p>" },
+    { "type": "text", "id": "heading_2", "label": "Second heading", "default": "Dyson Handheld Parts For Sale Online" },
+    { "type": "richtext", "id": "text_2", "label": "Second text", "default": "<p>The Vacuum Wizard supplies Dyson handheld spare parts for several popular cordless models, helping customers keep their machines working for longer.</p>" }
+  ],
+  "presets": [{ "name": "Home SEO content" }]
+}
+{% endschema %}

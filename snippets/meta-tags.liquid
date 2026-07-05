@@ -11,7 +11,7 @@
     assign meta_title = meta_title | append: ' - Page ' | append: current_page
   endif
 
-  assign meta_description = page_description | default: shop.description | strip_html | strip_newlines | truncate: 320
+  assign meta_description = page_description | default: shop.description | strip_html | strip_newlines | truncate: 160
   assign og_type = 'website'
   if request.page_type == 'product'
     assign og_type = 'product'
@@ -38,6 +38,7 @@
 {% endif %}
 
 <meta property="og:site_name" content="{{ shop.name | escape }}">
+<meta property="og:locale" content="{{ request.locale.iso_code | replace: '-', '_' }}">
 <meta property="og:url" content="{{ canonical_url }}">
 <meta property="og:title" content="{{ meta_title | escape }}">
 <meta property="og:type" content="{{ og_type }}">
@@ -54,9 +55,14 @@
   <meta property="product:price:amount" content="{{ product.selected_or_first_available_variant.price | money_without_currency | strip_html }}">
   <meta property="product:price:currency" content="{{ cart.currency.iso_code }}">
 {% endif %}
+{% if request.page_type == 'article' %}
+  <meta property="article:published_time" content="{{ article.published_at | date: '%Y-%m-%dT%H:%M:%S%z' }}">
+  <meta property="article:author" content="{{ article.author | escape }}">
+{% endif %}
 
 <meta name="twitter:card" content="{% if share_image != blank %}summary_large_image{% else %}summary{% endif %}">
 <meta name="twitter:title" content="{{ meta_title | escape }}">
 {% if meta_description != blank %}
   <meta name="twitter:description" content="{{ meta_description | escape }}">
 {% endif %}
+{% if share_image != blank %}<meta name="twitter:image" content="https:{{ share_image | image_url: width: 1200 }}">{% endif %}

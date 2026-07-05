@@ -1,0 +1,22 @@
+  <section class="big_season_sale">
+    <div class="wrapper">
+      {% if section.settings.link != blank %}<a href="{{ section.settings.link }}">{% endif %}
+        {% if section.settings.image != blank %}
+          {{ section.settings.image | image_url: width: 1800 | image_tag: loading: 'lazy', widths: '600, 900, 1200, 1800', sizes: '(max-width: 1150px) 100vw, 876px', alt: section.settings.image.alt | default: section.settings.alt_text }}
+        {% else %}
+          <img src="{{ 'home-season-sale.png' | asset_url }}" alt="{{ section.settings.alt_text | escape }}" loading="lazy" width="876" height="109">
+        {% endif %}
+      {% if section.settings.link != blank %}</a>{% endif %}
+    </div>
+  </section>
+{% schema %}
+{
+  "name": "Home sale banner",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Banner image" },
+    { "type": "text", "id": "alt_text", "label": "Image description", "default": "Current store promotion" },
+    { "type": "url", "id": "link", "label": "Banner link" }
+  ],
+  "presets": [{ "name": "Home sale banner" }]
+}
+{% endschema %}
