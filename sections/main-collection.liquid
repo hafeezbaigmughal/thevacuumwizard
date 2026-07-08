@@ -20,6 +20,8 @@
     {{ banner_image | image_url: width: 2100 | image_tag: loading: 'eager', alt: collection.title }}
   {% elsif collection.image %}
     {{ collection.image | image_url: width: 2100 | image_tag: loading: 'eager', alt: collection.title }}
+  {% else %}
+    <img src="{{ 'category-banner.jpg' | asset_url }}" width="1920" height="320" alt="{{ collection.title | escape }}" loading="eager">
   {% endif %}
   <div class="banrcaptionBox">
     <div class="wrapper">

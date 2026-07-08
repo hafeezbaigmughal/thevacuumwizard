@@ -4,7 +4,23 @@
   assign related_collection = product.collections.first
 -%}
 
-<section class="page-width product-detail template-section" data-section-id="{{ section.id }}">
+<div class="innerBanner product-detail-banner">
+  {% if section.settings.banner_image != blank %}
+    {{ section.settings.banner_image | image_url: width: 2100 | image_tag: loading: 'eager', alt: 'Product Details' }}
+  {% else %}
+    <img src="{{ 'product-banner.png' | asset_url }}" width="1920" height="320" alt="Product Details" loading="eager">
+  {% endif %}
+  <div class="banrcaptionBox">
+    <div class="wrapper">
+      <h2 class="title_center1"><span>Product <strong>Details</strong></span></h2>
+    </div>
+  </div>
+</div>
+
+<section class="our_product_inr productinnerpage">
+  <div class="wrapper">
+    <div class="our_product_details">
+      <div class="product-detail" data-section-id="{{ section.id }}">
   <div class="product-detail__top">
     <div class="product-detail__gallery">
       <div class="product-detail__main-image">
@@ -181,26 +197,81 @@
   {% if section.settings.show_related_products and related_collection != blank %}
     <section class="product-related">
       <h2>Related products</h2>
-      <div class="product-grid product-grid--related">
+      <div class="cat_sec productsBox clear">
+        <ul class="products_lists product-grid product-grid--related">
         {% assign shown_related = 0 %}
         {% for related_product in related_collection.products limit: 8 %}
           {% unless related_product.id == product.id %}
-            {% render 'vw-product-card', product: related_product %}
+            <li>
+              <div class="our_product_details_pic">
+                <a href="{{ related_product.url }}" class="pic_link" aria-label="{{ related_product.title | escape }}">
+                  {% if related_product.featured_image %}
+                    {{ related_product.featured_image | image_url: width: 520 | image_tag: loading: 'lazy', alt: related_product.title }}
+                  {% else %}
+                    {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                  {% endif %}
+                </a>
+                <div class="over_lay">
+                  <a class="button" href="{{ related_product.url }}">View Product</a>
+                </div>
+              </div>
+
+              <div class="our_product_details_text">
+                <div class="book_name">
+                  <a href="{{ related_product.url }}">{{ related_product.title }}</a>
+                </div>
+                <h3 class="prize">
+                  {% if related_product.compare_at_price > related_product.price %}
+                    {{ related_product.price | money }}
+                    <span>{{ related_product.compare_at_price | money }}</span>
+                  {% else %}
+                    {{ related_product.price | money }}
+                  {% endif %}
+                </h3>
+                <div class="add_waslist">
+                  {% if related_product.available and related_product.has_only_default_variant %}
+                    <form method="post" action="{{ routes.cart_add_url }}">
+                      <input type="hidden" name="id" value="{{ related_product.selected_or_first_available_variant.id }}">
+                      <button type="submit" aria-label="Add {{ related_product.title | escape }} to cart">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2Zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2ZM6.2 6l.9 5.3c.2 1 1 1.7 2 1.7h7.4c.9 0 1.7-.6 1.9-1.5L20 6H6.2ZM5.8 4H21c.6 0 1 .5.9 1.1l-1.6 6.9c-.4 1.8-2 3-3.8 3H9.1c-2 0-3.6-1.4-4-3.3L3.9 4.9 2 4.5V3h2.6c.6 0 1.1.4 1.2 1Z"/>
+                        </svg>
+                      </button>
+                    </form>
+                  {% else %}
+                    <a href="{{ related_product.url }}" aria-label="{% if related_product.available %}Choose options for{% else %}View{% endif %} {{ related_product.title | escape }}">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2Zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2ZM6.2 6l.9 5.3c.2 1 1 1.7 2 1.7h7.4c.9 0 1.7-.6 1.9-1.5L20 6H6.2ZM5.8 4H21c.6 0 1 .5.9 1.1l-1.6 6.9c-.4 1.8-2 3-3.8 3H9.1c-2 0-3.6-1.4-4-3.3L3.9 4.9 2 4.5V3h2.6c.6 0 1.1.4 1.2 1Z"/>
+                      </svg>
+                    </a>
+                  {% endif %}
+                </div>
+              </div>
+            </li>
             {% assign shown_related = shown_related | plus: 1 %}
           {% endunless %}
           {% if shown_related >= section.settings.related_limit %}
             {% break %}
           {% endif %}
         {% endfor %}
+        </ul>
       </div>
     </section>
   {% endif %}
+      </div>
+    </div>
+  </div>
 </section>
 
 {% schema %}
 {
   "name": "Main product",
   "settings": [
+    {
+      "type": "image_picker",
+      "id": "banner_image",
+      "label": "Banner image"
+    },
     {
       "type": "checkbox",
       "id": "show_short_description",
