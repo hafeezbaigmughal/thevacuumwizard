@@ -31,7 +31,14 @@ async function authenticate() {
       client_secret: config.SHOPIFY_CLIENT_SECRET,
     }),
   });
-  const payload = await response.json();
+  const responseText = await response.text();
+  let payload;
+  try {
+    payload = JSON.parse(responseText);
+  } catch {
+    const pageTitle = responseText.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1]?.replace(/<[^>]+>/g, "").trim();
+    throw new Error(`Shopify authentication failed (${response.status}): ${pageTitle || "non-JSON response"}`);
+  }
   if (!response.ok || !payload.access_token) throw new Error(`Shopify authentication failed: ${payload.error_description || payload.error || response.status}`);
   return payload;
 }
