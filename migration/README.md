@@ -76,6 +76,7 @@ node migration/replace-shopify-content.mjs import
 node migration/import-shopify-menus.mjs audit
 node migration/import-shopify-menus.mjs import
 node migration/import-shopify-menus.mjs verify
+node migration/replace-shopify-catalog.mjs update-descriptions
 ```
 
 The WordPress Navigation menu becomes Shopify's `main-menu`, Useful Links

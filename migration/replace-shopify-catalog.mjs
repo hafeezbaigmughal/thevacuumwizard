@@ -135,6 +135,10 @@ function normalizeExternalUrl(value) {
   }
 }
 
+function hasEscapedNewlines(value = "") {
+  return /\r?\\n|\\r/.test(value);
+}
+
 function productSetInput(handle, rows, locationId) {
   const productRow = rows.find((row) => row.Title);
   const variantRows = rows.filter((row) => row["Option1 value"]);
@@ -232,6 +236,30 @@ async function importProducts(groups, preflightData) {
   return imported;
 }
 
+async function updateProductDescriptions(groups, existingProducts) {
+  const productsByHandle = new Map(existingProducts.map((product) => [product.handle, product]));
+  const updated = [];
+  let index = 0;
+  for (const [handle, rows] of groups) {
+    index += 1;
+    const productRow = rows.find((row) => row.Title);
+    const existing = productsByHandle.get(handle);
+    if (!existing || !productRow) continue;
+    const descriptionHtml = productRow.Description || "";
+    if (existing.descriptionHtml === descriptionHtml && !hasEscapedNewlines(existing.descriptionHtml)) continue;
+    const data = await graphql(`mutation UpdateProductDescription($product: ProductUpdateInput!) {
+      productUpdate(product: $product) {
+        product { id handle title }
+        userErrors { field message }
+      }
+    }`, { product: { id: existing.id, descriptionHtml } });
+    assertUserErrors(data.productUpdate, `productUpdate ${handle}`);
+    updated.push(data.productUpdate.product);
+    console.log(`Updated product description ${index}/${groups.size}: ${data.productUpdate.product.title}`);
+  }
+  return updated;
+}
+
 async function importCollections(collections, publicationId) {
   const imported = [];
   for (const [index, collection] of collections.entries()) {
@@ -289,7 +317,7 @@ authentication = await authenticate();
 endpoint = `https://${shop}/admin/api/${apiVersion}/graphql.json`;
 
 const preflightData = await preflight();
-const existingProducts = await getAll("products", "id handle title status tags variants(first: 250) { nodes { id } } media(first: 250) { nodes { id status } }");
+const existingProducts = await getAll("products", "id handle title status tags descriptionHtml variants(first: 250) { nodes { id } } media(first: 250) { nodes { id status } }");
 const existingCollections = await getAll("collections", "id handle title products(first: 250) { nodes { handle } }");
 
 console.log(JSON.stringify({
@@ -342,6 +370,7 @@ if (command === "verify") {
   }
 
   const failedMedia = existingProducts.flatMap((product) => product.media.nodes.filter((media) => media.status === "FAILED").map((media) => ({ handle: product.handle, mediaId: media.id })));
+  const productDescriptionsWithEscapedNewlines = existingProducts.filter((product) => hasEscapedNewlines(product.descriptionHtml)).map((product) => product.handle);
   const report = {
     verifiedAt: new Date().toISOString(),
     products: existingProducts.length,
@@ -353,12 +382,30 @@ if (command === "verify") {
     extraCollections,
     collectionMismatches,
     failedMedia,
+    productDescriptionsWithEscapedNewlines,
   };
   await mkdir(resolve(root, "reports"), { recursive: true });
   await writeFile(resolve(root, "reports", "catalog-verification.json"), `${JSON.stringify(report, null, 2)}\n`);
   console.log(JSON.stringify(report, null, 2));
-  const failures = missingProducts.length + extraProducts.length + productMismatches.length + missingCollections.length + extraCollections.length + collectionMismatches.length + failedMedia.length;
+  const failures = missingProducts.length + extraProducts.length + productMismatches.length + missingCollections.length + extraCollections.length + collectionMismatches.length + failedMedia.length + productDescriptionsWithEscapedNewlines.length;
   if (failures) throw new Error(`Catalog verification found ${failures} mismatch groups.`);
+  process.exit(0);
+}
+
+if (command === "update-descriptions") {
+  const updatedProducts = await updateProductDescriptions(groups, existingProducts);
+  const finalProducts = await getAll("products", "id handle title descriptionHtml");
+  const productDescriptionsWithEscapedNewlines = finalProducts.filter((product) => hasEscapedNewlines(product.descriptionHtml)).map((product) => product.handle);
+  const report = {
+    completedAt: new Date().toISOString(),
+    updated: updatedProducts.length,
+    finalProducts: finalProducts.length,
+    productDescriptionsWithEscapedNewlines,
+  };
+  await mkdir(resolve(root, "reports"), { recursive: true });
+  await writeFile(resolve(root, "reports", "product-description-update.json"), `${JSON.stringify(report, null, 2)}\n`);
+  console.log(JSON.stringify(report, null, 2));
+  if (productDescriptionsWithEscapedNewlines.length) throw new Error("Some product descriptions still contain escaped newline strings.");
   process.exit(0);
 }
 

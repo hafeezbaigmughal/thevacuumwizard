@@ -104,8 +104,16 @@ function rewriteLinks(html) {
     .replace(/href=["']\/articles\/([^"'/?#]+)\/?["']/gi, (_, slug) => `href="/blogs/articles/${normalizeHandle(slug)}"`);
 }
 
+function normalizeEscapedNewlines(html) {
+  return html.replace(/\r?\\n/g, "\n").replace(/\\r/g, "");
+}
+
+function restoreWordPressMediaUrls(html) {
+  return html.replace(/(^|["'\s(,])\/wp-content\//g, "$1https://thevacuumwizard.co.uk/wp-content/");
+}
+
 function cleanHtml(value = "") {
-  return rewriteLinks(value)
+  return restoreWordPressMediaUrls(rewriteLinks(normalizeEscapedNewlines(value)))
     .replace(/<!--[\s\S]*?-->/g, "")
     .replace(/<(script|style|link|noscript)\b[^>]*>[\s\S]*?<\/\1>/gi, "")
     .replace(/<form\b[^>]*>[\s\S]*?<\/form>/gi, "")
@@ -202,6 +210,30 @@ if (blog) {
 }
 
 const currentArticles = new Map((existingBlogs.find((item) => item.handle === "articles")?.articles.nodes || []).map((article) => [article.handle, article]));
+async function saveArticle(input, existing, handle) {
+  const operation = existing ? "articleUpdate" : "articleCreate";
+  const mutation = existing
+    ? `mutation UpdateArticle($id: ID!, $article: ArticleUpdateInput!) {
+      articleUpdate(id: $id, article: $article) { article { id handle title } userErrors { field message } }
+    }`
+    : `mutation CreateArticle($article: ArticleCreateInput!) {
+      articleCreate(article: $article) { article { id handle title } userErrors { field message } }
+    }`;
+  const variables = existing ? { id: existing.id, article: input } : { article: input };
+  const data = await graphql(mutation, variables);
+  const result = data[operation];
+  const imageFailed = result.userErrors?.some((error) => /image upload failed/i.test(error.message));
+  if (imageFailed && input.image) {
+    console.warn(`Article image skipped for ${handle}: Shopify could not download ${input.image.url}`);
+    const { image, ...inputWithoutImage } = input;
+    const retryData = await graphql(mutation, existing ? { id: existing.id, article: inputWithoutImage } : { article: inputWithoutImage });
+    assertUserErrors(retryData[operation], `${operation} ${handle}`);
+    return retryData[operation].article;
+  }
+  assertUserErrors(result, `${operation} ${handle}`);
+  return result.article;
+}
+
 for (const [index, source] of wpArticles.entries()) {
   const handle = normalizeHandle(source.slug);
   const body = cleanHtml(source.content.rendered);
@@ -219,17 +251,7 @@ for (const [index, source] of wpArticles.entries()) {
     ...(featuredMedia?.source_url ? { image: { url: normalizeUrl(featuredMedia.source_url), altText: decodeHtml(featuredMedia.alt_text || source.title.rendered) } } : {}),
   };
   const existing = currentArticles.get(handle);
-  if (existing) {
-    const data = await graphql(`mutation UpdateArticle($id: ID!, $article: ArticleUpdateInput!) {
-      articleUpdate(id: $id, article: $article) { article { id handle title } userErrors { field message } }
-    }`, { id: existing.id, article: input });
-    assertUserErrors(data.articleUpdate, `articleUpdate ${handle}`);
-  } else {
-    const data = await graphql(`mutation CreateArticle($article: ArticleCreateInput!) {
-      articleCreate(article: $article) { article { id handle title } userErrors { field message } }
-    }`, { article: input });
-    assertUserErrors(data.articleCreate, `articleCreate ${handle}`);
-  }
+  await saveArticle(input, existing, handle);
   console.log(`Imported article ${index + 1}/${wpArticles.length}: ${input.title}`);
 }
 

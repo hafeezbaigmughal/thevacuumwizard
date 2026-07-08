@@ -24,6 +24,11 @@ function ConvertTo-Handle([string]$Value) {
   return (($decoded -replace '[^a-z0-9]+', '-').Trim('-'))
 }
 
+function Normalize-Description([string]$Value) {
+  if ([string]::IsNullOrWhiteSpace($Value)) { return '' }
+  return (($Value -replace "`r?\\n", "`n") -replace "\\r", '')
+}
+
 function Price-Fields($Row) {
   $regular = $Row.'Regular price'
   $sale = $Row.'Sale price'
@@ -168,7 +173,7 @@ foreach ($parent in $parents) {
   if (-not $primaryCategory) { $primaryCategory = @($categoryNames | Select-Object -Last 1)[0] }
 
   $published = $parent.Published -eq '1'
-  $description = if ($parent.Description) { $parent.Description } else { $parent.'Short description' }
+  $description = Normalize-Description $(if ($parent.Description) { $parent.Description } else { $parent.'Short description' })
   $images = @(Split-List $parent.Images | Select-Object -Unique)
   $imageAltByUrl = @{}
   $publicProduct = $publicProducts | Where-Object { [string]$_.id -eq [string]$parent.ID } | Select-Object -First 1
@@ -283,7 +288,7 @@ $collections = foreach ($category in $categories) {
     title = $category.name
     handle = $category.slug
     parentWordpressId = $category.parent
-    descriptionHtml = $category.description
+    descriptionHtml = Normalize-Description $category.description
     productCount = $category.count
     membershipTag = "wc-cat--$($category.slug)"
   }
