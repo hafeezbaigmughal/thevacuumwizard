@@ -1,23 +1,101 @@
-<section class="page-width template-section">
-  <header class="template-heading">
-    <h1>{{ blog.title }}</h1>
-  </header>
-  <div class="blog-grid">
-    {% paginate blog.articles by 12 %}
-      {% for article in blog.articles %}
-        {% render 'vw-blog-card', article: article %}
-      {% else %}
-        <p>No articles found.</p>
-      {% endfor %}
-      {% if paginate.pages > 1 %}
-        <nav class="pagination" role="navigation">{{ paginate | default_pagination }}</nav>
-      {% endif %}
-    {% endpaginate %}
+<div class="innerBanner blog-template-banner">
+  <img src="{{ 'blog-banner.png' | asset_url }}" width="1920" height="320" alt="Blog" loading="eager">
+  <div class="banrcaptionBox">
+    <div class="wrapper">
+      <h1 class="title_center1"><span>Blog <strong></strong></span></h1>
+    </div>
+  </div>
+</div>
+
+<section class="blog_sec blog-template">
+  <div class="wrapper">
+    <div class="blog_sec_left">
+      {% paginate blog.articles by section.settings.posts_per_page %}
+        {% for article in blog.articles %}
+          {% assign title_words = article.title | split: ' ' %}
+          {% assign first_word = title_words | first %}
+          {% assign remaining_title = article.title | remove_first: first_word | strip %}
+          {% assign article_alt = article.image.alt | default: article.title %}
+
+          <article class="blog_part">
+            <h1 class="title_left">{{ first_word }}{% if remaining_title != blank %} <strong>{{ remaining_title }}</strong>{% endif %}</h1>
+
+            {% if article.image %}
+              <div class="blog_img">
+                <a href="{{ article.url }}">
+                  {{ article.image | image_url: width: 1024 | image_tag: loading: 'lazy', widths: '480, 720, 1024', sizes: '(max-width: 959px) 100vw, 748px', alt: article_alt }}
+                </a>
+              </div>
+            {% endif %}
+
+            <div class="blog_cmd">
+              <ul>
+                <li>
+                  <a aria-label="Published date">
+                    <span class="blog-meta-icon blog-meta-icon--calendar" aria-hidden="true"></span>
+                    {{ article.published_at | date: '%d %b %Y' }}
+                  </a>
+                </li>
+                <li>
+                  <a aria-label="Author">
+                    <span class="blog-meta-icon blog-meta-icon--author" aria-hidden="true"></span>
+                    {{ article.author | default: shop.name }}
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <p>{{ article.excerpt_or_content | strip_html | truncatewords: 72 }} <a href="{{ article.url }}" class="readmore">[...]</a></p>
+            <div class="blog_btn"><a href="{{ article.url }}">Keep Reading</a></div>
+          </article>
+        {% else %}
+          <article class="blog_part">
+            <p class="nocontent">No articles found.</p>
+          </article>
+        {% endfor %}
+
+        {% if paginate.pages > 1 %}
+          <div class="painx">
+            <nav class="navigation pagination" role="navigation" aria-label="Posts pagination">
+              {{ paginate | default_pagination }}
+            </nav>
+          </div>
+        {% endif %}
+      {% endpaginate %}
+    </div>
+
+    {% render 'vw-blog-sidebar', blog: blog, sidebar_posts: section.settings.sidebar_posts, show_archives: section.settings.show_archives %}
   </div>
 </section>
 
 {% schema %}
 {
-  "name": "Main blog"
+  "name": "Main blog",
+  "settings": [
+    {
+      "type": "range",
+      "id": "posts_per_page",
+      "label": "Posts per page",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "sidebar_posts",
+      "label": "Sidebar latest posts",
+      "min": 3,
+      "max": 8,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "checkbox",
+      "id": "show_archives",
+      "label": "Show archive list",
+      "default": true
+    }
+  ]
 }
 {% endschema %}

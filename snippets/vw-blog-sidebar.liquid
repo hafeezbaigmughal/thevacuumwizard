@@ -1,0 +1,60 @@
+{% assign sidebar_posts = sidebar_posts | default: 6 %}
+{% if show_archives == nil %}
+  {% assign show_archives = true %}
+{% endif %}
+
+<aside class="blog_sec_right">
+  <h2>Search</h2>
+  <div class="panelBox">
+    <div class="blogSearchBox">
+      <form role="search" action="{{ routes.search_url }}" method="get">
+        <input type="hidden" name="type" value="article">
+        <input name="q" placeholder="Looking For......." required type="text">
+        <input alt="Search" value="" type="submit">
+      </form>
+    </div>
+  </div>
+
+  <h2>Latest <strong>Posts</strong></h2>
+  <div class="post bg">
+    <ul>
+      {% for latest_article in blog.articles limit: sidebar_posts %}
+        {% assign latest_alt = latest_article.image.alt | default: latest_article.title %}
+        <li>
+          <a href="{{ latest_article.url }}">
+            {% if latest_article.image %}
+              {{ latest_article.image | image_url: width: 220 | image_tag: loading: 'lazy', widths: '120, 220', sizes: '100px', alt: latest_alt }}
+            {% else %}
+              {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+            {% endif %}
+            <h3><span>{{ latest_article.published_at | date: '%d %b %Y' }}</span>{{ latest_article.title }}</h3>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  {% if show_archives %}
+    <h2>Archives</h2>
+    <div class="arc_1">
+      <ul>
+        {% assign rendered_months = '' %}
+        {% for archive_article in blog.articles limit: 50 %}
+          {% assign archive_label = archive_article.published_at | date: '%B %Y' %}
+          {% assign archive_key = archive_article.published_at | date: '%Y-%m' %}
+          {% unless rendered_months contains archive_key %}
+            {% assign archive_count = 0 %}
+            {% for count_article in blog.articles limit: 50 %}
+              {% assign count_key = count_article.published_at | date: '%Y-%m' %}
+              {% if count_key == archive_key %}
+                {% assign archive_count = archive_count | plus: 1 %}
+              {% endif %}
+            {% endfor %}
+            <li><a href="{{ blog.url }}?month={{ archive_key }}">{{ archive_label }}</a>&nbsp;({{ archive_count }})</li>
+            {% capture rendered_months %}{{ rendered_months }}|{{ archive_key }}{% endcapture %}
+          {% endunless %}
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+</aside>

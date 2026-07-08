@@ -1,46 +1,105 @@
-<article class="page-width template-section article-page">
-  {% if article.image %}
-    {% assign article_alt = article.image.alt | default: article.title %}
-    {{ article.image | image_url: width: 1200 | image_tag: loading: 'eager', alt: article_alt, class: 'article-page__image' }}
-  {% endif %}
-  <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%d %b %Y' }}</time>
-  <h1>{{ article.title }}</h1>
-  {% if section.settings.show_author %}<p>By {{ article.author }}</p>{% endif %}
-  <div class="rte">{{ article.content }}</div>
+<div class="innerBanner blog-template-banner blog-template-banner--detail">
+  <img src="{{ 'blog-detail-banner.png' | asset_url }}" width="2100" height="350" alt="Blog Details" loading="eager">
+  <div class="banrcaptionBox">
+    <div class="wrapper">
+      <h1 class="title_center1"><span>Blog <strong>Details</strong></span></h1>
+    </div>
+  </div>
+</div>
 
-  {% if blog.comments_enabled? %}
-    <section class="article-comments" id="comments">
-      <h2>Comments ({{ article.comments_count }})</h2>
-      {% paginate article.comments by 20 %}
-        {% for comment in article.comments %}
-          <article class="article-comment">
-            <div class="rte">{{ comment.content }}</div>
-            <p>{{ comment.author }} on <time datetime="{{ comment.created_at | date: '%Y-%m-%d' }}">{{ comment.created_at | date: '%d %b %Y' }}</time></p>
-          </article>
-        {% endfor %}
-        {% if paginate.pages > 1 %}<nav class="pagination" aria-label="Comment pagination">{{ paginate | default_pagination }}</nav>{% endif %}
-      {% endpaginate %}
+<section class="blog_sec blog-template blog-template--article">
+  <div class="wrapper">
+    <article class="blog_sec_left">
+      {% assign title_words = article.title | split: ' ' %}
+      {% assign first_word = title_words | first %}
+      {% assign remaining_title = article.title | remove_first: first_word | strip %}
+      {% assign article_alt = article.image.alt | default: article.title %}
 
-      {% form 'new_comment', article, class: 'comment-form' %}
-        {% if form.posted_successfully? %}<p class="form-status">Your comment was submitted{% if blog.moderated? %} and is awaiting approval{% endif %}.</p>{% endif %}
-        {{ form.errors | default_errors }}
-        <label for="CommentAuthor">Name</label>
-        <input id="CommentAuthor" type="text" name="comment[author]" value="{{ form.author }}" autocomplete="name" required>
-        <label for="CommentEmail">Email</label>
-        <input id="CommentEmail" type="email" name="comment[email]" value="{{ form.email }}" autocomplete="email" required>
-        <label for="CommentBody">Comment</label>
-        <textarea id="CommentBody" name="comment[body]" rows="6" required>{{ form.body }}</textarea>
-        <button class="button button--red" type="submit">Post comment</button>
-      {% endform %}
-    </section>
-  {% endif %}
-</article>
+      <div class="blog_part">
+        <h1 class="title_left">{{ first_word }}{% if remaining_title != blank %} <strong>{{ remaining_title }}</strong>{% endif %}</h1>
+
+        {% if article.image %}
+          <div class="blog_img">
+            <a href="{{ article.url }}">
+              {{ article.image | image_url: width: 1024 | image_tag: loading: 'eager', widths: '480, 720, 1024', sizes: '(max-width: 959px) 100vw, 748px', alt: article_alt }}
+            </a>
+          </div>
+        {% endif %}
+
+        <div class="blog_cmd">
+          <ul>
+            <li>
+              <a aria-label="Published date">
+                <span class="blog-meta-icon blog-meta-icon--calendar" aria-hidden="true"></span>
+                {{ article.published_at | date: '%d %b %Y' }}
+              </a>
+            </li>
+            {% if section.settings.show_author %}
+              <li>
+                <a aria-label="Author">
+                  <span class="blog-meta-icon blog-meta-icon--author" aria-hidden="true"></span>
+                  {{ article.author | default: shop.name }}
+                </a>
+              </li>
+            {% endif %}
+          </ul>
+        </div>
+
+        <div class="blog_content rte">{{ article.content }}</div>
+      </div>
+
+      {% if blog.comments_enabled? %}
+        <section class="article-comments" id="comments">
+          <h2>Comments ({{ article.comments_count }})</h2>
+          {% paginate article.comments by 20 %}
+            {% for comment in article.comments %}
+              <article class="article-comment">
+                <div class="rte">{{ comment.content }}</div>
+                <p>{{ comment.author }} on <time datetime="{{ comment.created_at | date: '%Y-%m-%d' }}">{{ comment.created_at | date: '%d %b %Y' }}</time></p>
+              </article>
+            {% endfor %}
+            {% if paginate.pages > 1 %}<nav class="pagination" aria-label="Comment pagination">{{ paginate | default_pagination }}</nav>{% endif %}
+          {% endpaginate %}
+
+          {% form 'new_comment', article, class: 'comment-form' %}
+            {% if form.posted_successfully? %}<p class="form-status">Your comment was submitted{% if blog.moderated? %} and is awaiting approval{% endif %}.</p>{% endif %}
+            {{ form.errors | default_errors }}
+            <label for="CommentAuthor">Name</label>
+            <input id="CommentAuthor" type="text" name="comment[author]" value="{{ form.author }}" autocomplete="name" required>
+            <label for="CommentEmail">Email</label>
+            <input id="CommentEmail" type="email" name="comment[email]" value="{{ form.email }}" autocomplete="email" required>
+            <label for="CommentBody">Comment</label>
+            <textarea id="CommentBody" name="comment[body]" rows="6" required>{{ form.body }}</textarea>
+            <button class="button button--red" type="submit">Post comment</button>
+          {% endform %}
+        </section>
+      {% endif %}
+    </article>
+
+    {% render 'vw-blog-sidebar', blog: blog, sidebar_posts: section.settings.sidebar_posts, show_archives: section.settings.show_archives %}
+  </div>
+</section>
 
 {% schema %}
 {
   "name": "Main article",
   "settings": [
-    { "type": "checkbox", "id": "show_author", "label": "Show author", "default": true }
+    { "type": "checkbox", "id": "show_author", "label": "Show author", "default": true },
+    {
+      "type": "range",
+      "id": "sidebar_posts",
+      "label": "Sidebar latest posts",
+      "min": 3,
+      "max": 8,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "checkbox",
+      "id": "show_archives",
+      "label": "Show archive list",
+      "default": true
+    }
   ]
 }
 {% endschema %}
