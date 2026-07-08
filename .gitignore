@@ -4,3 +4,6 @@ saved-html/
 signle-product/
 CATEGORY/
 home/
+migration/data/
+migration/reports/
+.env.migration.local
