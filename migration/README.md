@@ -35,6 +35,7 @@ install it on `7xh60f-04.myshopify.com`:
 
 ```text
 read_products,write_products,
+read_inventory,write_inventory,read_locations,
 read_content,write_content,
 read_files,write_files,
 read_online_store_navigation,write_online_store_navigation,
@@ -46,3 +47,20 @@ ID and Client Secret in the local file. `.env.migration.local` is excluded from
 Git and must never be committed or sent in chat.
 
 Delete the migration app after the final validation and redirects are complete.
+
+## Fresh catalog replacement
+
+Build and validate the Shopify import data:
+
+```powershell
+./migration/build-shopify-import.ps1
+node migration/replace-shopify-catalog.mjs audit
+```
+
+The replacement command permanently deletes all existing Shopify products and
+collections before importing the WordPress catalog. Run it only after the audit
+passes:
+
+```powershell
+node migration/replace-shopify-catalog.mjs replace --confirm=DELETE-ALL-PRODUCTS-AND-COLLECTIONS
+```

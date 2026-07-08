@@ -6,4 +6,5 @@ CATEGORY/
 home/
 migration/data/
 migration/reports/
+migration/output/
 .env.migration.local
