@@ -125,16 +125,28 @@ function groupedProducts(rows) {
   return groups;
 }
 
+function normalizeExternalUrl(value) {
+  if (!value) return null;
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" || url.protocol === "http:" ? url.href : null;
+  } catch {
+    return null;
+  }
+}
+
 function productSetInput(handle, rows, locationId) {
   const productRow = rows.find((row) => row.Title);
   const variantRows = rows.filter((row) => row["Option1 value"]);
   const optionName = variantRows[0]?.["Option1 name"] === "Default Title" ? "Title" : variantRows[0]?.["Option1 name"];
   const optionValues = [...new Set(variantRows.map((row) => row["Option1 value"]))];
-  const files = rows.filter((row) => row["Product image URL"]).map((row) => ({
-    originalSource: row["Product image URL"],
-    contentType: "IMAGE",
-    ...(row["Image alt text"] ? { alt: row["Image alt text"] } : {}),
-  }));
+  const files = rows.map((row) => ({ row, url: normalizeExternalUrl(row["Product image URL"]) }))
+    .filter(({ url }) => url)
+    .map(({ row, url }) => ({
+      originalSource: url,
+      contentType: "IMAGE",
+      ...(row["Image alt text"] ? { alt: row["Image alt text"] } : {}),
+    }));
   const input = {
     title: productRow.Title,
     handle,
@@ -277,8 +289,8 @@ authentication = await authenticate();
 endpoint = `https://${shop}/admin/api/${apiVersion}/graphql.json`;
 
 const preflightData = await preflight();
-const existingProducts = await getAll("products", "id handle title");
-const existingCollections = await getAll("collections", "id handle title");
+const existingProducts = await getAll("products", "id handle title status tags variants(first: 250) { nodes { id } } media(first: 250) { nodes { id status } }");
+const existingCollections = await getAll("collections", "id handle title products(first: 250) { nodes { handle } }");
 
 console.log(JSON.stringify({
   command,
@@ -291,20 +303,105 @@ console.log(JSON.stringify({
 }, null, 2));
 
 if (command === "audit") process.exit(0);
-if (command !== "replace") throw new Error(`Unknown command: ${command}`);
-if (confirmation !== "DELETE-ALL-PRODUCTS-AND-COLLECTIONS") {
-  throw new Error("Replacement requires --confirm=DELETE-ALL-PRODUCTS-AND-COLLECTIONS");
+
+if (command === "verify") {
+  const productsByHandle = new Map(existingProducts.map((product) => [product.handle, product]));
+  const collectionsByHandle = new Map(existingCollections.map((collection) => [collection.handle, collection]));
+  const missingProducts = [...groups.keys()].filter((handle) => !productsByHandle.has(handle));
+  const extraProducts = existingProducts.filter((product) => !groups.has(product.handle)).map((product) => product.handle);
+  const productMismatches = [];
+
+  for (const [handle, rows] of groups) {
+    const current = productsByHandle.get(handle);
+    if (!current) continue;
+    const productRow = rows.find((row) => row.Title);
+    const expectedStatus = productRow.Status.toUpperCase();
+    const expectedVariants = rows.filter((row) => row["Option1 value"]).length;
+    const expectedMedia = rows.filter((row) => normalizeExternalUrl(row["Product image URL"])).length;
+    if (current.status !== expectedStatus || current.variants.nodes.length !== expectedVariants || current.media.nodes.length !== expectedMedia) {
+      productMismatches.push({
+        handle,
+        status: `${current.status}/${expectedStatus}`,
+        variants: `${current.variants.nodes.length}/${expectedVariants}`,
+        media: `${current.media.nodes.length}/${expectedMedia}`,
+      });
+    }
+  }
+
+  const missingCollections = collectionInputs.filter((collection) => !collectionsByHandle.has(collection.handle)).map((collection) => collection.handle);
+  const extraCollections = existingCollections.filter((collection) => !collectionInputs.some((source) => source.handle === collection.handle)).map((collection) => collection.handle);
+  const collectionMismatches = [];
+  for (const collection of collectionInputs) {
+    const current = collectionsByHandle.get(collection.handle);
+    if (!current) continue;
+    const expectedHandles = new Set([...groups].filter(([, rows]) => rows.find((row) => row.Title)?.Tags.split(/,\s*/).includes(collection.membershipTag)).map(([handle]) => handle));
+    const actualHandles = new Set(current.products.nodes.map((product) => product.handle));
+    const missing = [...expectedHandles].filter((handle) => !actualHandles.has(handle));
+    const extra = [...actualHandles].filter((handle) => !expectedHandles.has(handle));
+    if (missing.length || extra.length) collectionMismatches.push({ handle: collection.handle, missing, extra });
+  }
+
+  const failedMedia = existingProducts.flatMap((product) => product.media.nodes.filter((media) => media.status === "FAILED").map((media) => ({ handle: product.handle, mediaId: media.id })));
+  const report = {
+    verifiedAt: new Date().toISOString(),
+    products: existingProducts.length,
+    collections: existingCollections.length,
+    missingProducts,
+    extraProducts,
+    productMismatches,
+    missingCollections,
+    extraCollections,
+    collectionMismatches,
+    failedMedia,
+  };
+  await mkdir(resolve(root, "reports"), { recursive: true });
+  await writeFile(resolve(root, "reports", "catalog-verification.json"), `${JSON.stringify(report, null, 2)}\n`);
+  console.log(JSON.stringify(report, null, 2));
+  const failures = missingProducts.length + extraProducts.length + productMismatches.length + missingCollections.length + extraCollections.length + collectionMismatches.length + failedMedia.length;
+  if (failures) throw new Error(`Catalog verification found ${failures} mismatch groups.`);
+  process.exit(0);
 }
 
-await deleteCatalog(existingProducts, existingCollections);
-const importedProducts = await importProducts(groups, preflightData);
-const importedCollections = await importCollections(collectionInputs, preflightData.publication.id);
+let groupsToImport = groups;
+let collectionsToImport = collectionInputs;
+let deletedProducts = 0;
+let deletedCollections = 0;
+
+if (command === "replace") {
+  if (confirmation !== "DELETE-ALL-PRODUCTS-AND-COLLECTIONS") {
+    throw new Error("Replacement requires --confirm=DELETE-ALL-PRODUCTS-AND-COLLECTIONS");
+  }
+  await deleteCatalog(existingProducts, existingCollections);
+  deletedProducts = existingProducts.length;
+  deletedCollections = existingCollections.length;
+} else if (command === "resume") {
+  const existingProductHandles = new Set(existingProducts.map((product) => product.handle));
+  const existingCollectionHandles = new Set(existingCollections.map((collection) => collection.handle));
+  groupsToImport = new Map([...groups].filter(([handle]) => !existingProductHandles.has(handle)));
+  collectionsToImport = collectionInputs.filter((collection) => !existingCollectionHandles.has(collection.handle));
+} else if (command === "reconcile") {
+  if (confirmation !== "RECONCILE-CATALOG") throw new Error("Reconciliation requires --confirm=RECONCILE-CATALOG");
+  const extraProducts = existingProducts.filter((product) => !groups.has(product.handle));
+  const extraCollections = existingCollections.filter((collection) => !collectionInputs.some((source) => source.handle === collection.handle));
+  if (extraProducts.length || extraCollections.length) await deleteCatalog(extraProducts, extraCollections);
+  deletedProducts = extraProducts.length;
+  deletedCollections = extraCollections.length;
+  const remainingProductHandles = new Set(existingProducts.filter((product) => !extraProducts.includes(product)).map((product) => product.handle));
+  const remainingCollectionHandles = new Set(existingCollections.filter((collection) => !extraCollections.includes(collection)).map((collection) => collection.handle));
+  groupsToImport = new Map([...groups].filter(([handle]) => !remainingProductHandles.has(handle)));
+  collectionsToImport = collectionInputs.filter((collection) => !remainingCollectionHandles.has(collection.handle));
+} else {
+  throw new Error(`Unknown command: ${command}`);
+}
+
+const importedProducts = await importProducts(groupsToImport, preflightData);
+const importedCollections = await importCollections(collectionsToImport, preflightData.publication.id);
 const finalProducts = await getAll("products", "id handle title");
 const finalCollections = await getAll("collections", "id handle title");
 const report = {
   completedAt: new Date().toISOString(),
   shop: preflightData.shopName,
-  deleted: { products: existingProducts.length, collections: existingCollections.length },
+  deleted: { products: deletedProducts, collections: deletedCollections },
   imported: { products: importedProducts.length, collections: importedCollections.length },
   final: { products: finalProducts.length, collections: finalCollections.length },
 };

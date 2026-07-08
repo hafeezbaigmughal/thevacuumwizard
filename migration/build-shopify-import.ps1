@@ -144,6 +144,7 @@ $audit = [Collections.Generic.List[object]]::new()
 foreach ($parent in $parents) {
   $handle = $slugById[[string]$parent.ID]
   if ([string]::IsNullOrWhiteSpace($handle)) { $handle = ConvertTo-Handle $parent.Name }
+  else { $handle = ConvertTo-Handle ([Uri]::UnescapeDataString($handle)) }
   if ([string]::IsNullOrWhiteSpace($handle)) { throw "No handle can be generated for product $($parent.ID)" }
 
   $categoryTags = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)

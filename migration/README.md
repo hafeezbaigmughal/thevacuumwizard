@@ -64,3 +64,21 @@ passes:
 ```powershell
 node migration/replace-shopify-catalog.mjs replace --confirm=DELETE-ALL-PRODUCTS-AND-COLLECTIONS
 ```
+
+## Content and navigation
+
+Import pages, Articles, testimonials, and URL redirects, then migrate the three
+WordPress navigation menus to Shopify:
+
+```powershell
+node migration/replace-shopify-content.mjs audit
+node migration/replace-shopify-content.mjs import
+node migration/import-shopify-menus.mjs audit
+node migration/import-shopify-menus.mjs import
+node migration/import-shopify-menus.mjs verify
+```
+
+The WordPress Navigation menu becomes Shopify's `main-menu`, Useful Links
+becomes `useful-links`, and Footer Bottom Menu becomes `footer-bottom-menu`.
+The theme uses `main-menu` in the header, `useful-links` in the footer, and
+`footer-bottom-menu` in the footer terms strip by default.

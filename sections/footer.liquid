@@ -66,9 +66,16 @@
     <div class="footer_middl">
       <div class="wrapper">
         <ul>
-          {% for policy in shop.policies %}
-            {% if policy != blank %}<li><a href="{{ policy.url }}">{{ policy.title }}</a></li>{% endif %}
-          {% endfor %}
+          {% assign footer_bottom_menu = linklists[section.settings.footer_bottom_menu] %}
+          {% if section.settings.footer_bottom_menu != blank and footer_bottom_menu.links.size > 0 %}
+            {% for link in footer_bottom_menu.links %}
+              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+            {% endfor %}
+          {% else %}
+            {% for policy in shop.policies %}
+              {% if policy != blank %}<li><a href="{{ policy.url }}">{{ policy.title }}</a></li>{% endif %}
+            {% endfor %}
+          {% endif %}
         </ul>
       </div>
     </div>
@@ -90,7 +97,14 @@
     {
       "type": "link_list",
       "id": "footer_menu",
-      "label": "Footer menu"
+      "label": "Footer menu",
+      "default": "useful-links"
+    },
+    {
+      "type": "link_list",
+      "id": "footer_bottom_menu",
+      "label": "Footer bottom menu",
+      "default": "footer-bottom-menu"
     },
     {
       "type": "image_picker",
