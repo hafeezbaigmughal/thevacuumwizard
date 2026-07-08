@@ -90,15 +90,8 @@ async function getMenus() {
 }
 
 async function getMenuByHandle(handle) {
-  const data = await graphql(`query MigrationMenuByHandle($handle: String!) {
-    menu(handle: $handle) {
-      id
-      handle
-      title
-      items { id title type url items { id title type url } }
-    }
-  }`, { handle });
-  return data.menu;
+  const menus = await getMenus();
+  return menus.find((menu) => menu.handle === handle) || null;
 }
 
 const [sourceMenus, sourceItems] = await Promise.all([loadJson("menus.json"), loadJson("menu-items.json")]);
