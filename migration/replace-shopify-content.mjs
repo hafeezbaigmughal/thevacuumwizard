@@ -87,6 +87,16 @@ function normalizeUrl(value) {
   try { return new URL(value).href; } catch { return null; }
 }
 
+function sourcePathFromUrl(value) {
+  if (!value) return null;
+  try {
+    const pathname = new URL(value).pathname.replace(/\/$/, "");
+    return pathname || "/";
+  } catch {
+    return null;
+  }
+}
+
 const systemRoutes = new Map([
   ["shop", "/collections/all"],
   ["cart", "/cart"],
@@ -100,7 +110,7 @@ function rewriteLinks(html) {
   return html
     .replace(/https?:\/\/thevacuumwizard\.co\.uk/gi, "")
     .replace(/href=["']\/product\/([^"'/?#]+)\/?["']/gi, (_, slug) => `href="/products/${normalizeHandle(slug)}"`)
-    .replace(/href=["']\/product-category\/([^"'/?#]+)\/?["']/gi, (_, slug) => `href="/collections/${normalizeHandle(slug)}"`)
+    .replace(/href=["']\/product-category\/(?:[^"'/?#]+\/)*([^"'/?#]+)\/?["']/gi, (_, slug) => `href="/collections/${normalizeHandle(slug)}"`)
     .replace(/href=["']\/articles\/([^"'/?#]+)\/?["']/gi, (_, slug) => `href="/blogs/articles/${normalizeHandle(slug)}"`);
 }
 
@@ -257,13 +267,33 @@ for (const [index, source] of wpArticles.entries()) {
 
 const desiredRedirects = new Map();
 for (const [slug, target] of systemRoutes) if (`/${slug}` !== target) desiredRedirects.set(`/${slug}`, target);
-for (const page of contentPages) desiredRedirects.set(`/${page.source.slug}`, `/pages/${page.handle}`);
-for (const article of wpArticles) desiredRedirects.set(`/articles/${article.slug}`, `/blogs/articles/${normalizeHandle(article.slug)}`);
-for (const category of categories) desiredRedirects.set(`/product-category/${category.slug}`, `/collections/${category.slug}`);
+for (const page of contentPages) {
+  const target = `/pages/${page.handle}`;
+  desiredRedirects.set(`/${page.source.slug}`, target);
+  const sourcePath = sourcePathFromUrl(page.source.link);
+  if (sourcePath && sourcePath !== target) desiredRedirects.set(sourcePath, target);
+}
+for (const article of wpArticles) {
+  const target = `/blogs/articles/${normalizeHandle(article.slug)}`;
+  desiredRedirects.set(`/articles/${article.slug}`, target);
+  const sourcePath = sourcePathFromUrl(article.link);
+  if (sourcePath && sourcePath !== target) desiredRedirects.set(sourcePath, target);
+}
+for (const category of categories) {
+  const target = `/collections/${normalizeHandle(category.slug)}`;
+  desiredRedirects.set(`/product-category/${category.slug}`, target);
+  const sourcePath = sourcePathFromUrl(category.link);
+  if (sourcePath && sourcePath !== target) desiredRedirects.set(sourcePath, target);
+}
 const productHandles = new Set(productRows.filter((row) => row.Title).map((row) => row["URL handle"]));
 for (const product of wpProducts) {
   const targetHandle = normalizeHandle(product.slug);
-  if (productHandles.has(targetHandle)) desiredRedirects.set(`/product/${product.slug}`, `/products/${targetHandle}`);
+  if (productHandles.has(targetHandle)) {
+    const target = `/products/${targetHandle}`;
+    desiredRedirects.set(`/product/${product.slug}`, target);
+    const sourcePath = sourcePathFromUrl(product.permalink || product.link);
+    if (sourcePath && sourcePath !== target) desiredRedirects.set(sourcePath, target);
+  }
 }
 
 const redirectByPath = new Map(existingRedirects.map((redirect) => [redirect.path.replace(/\/$/, ""), redirect]));
