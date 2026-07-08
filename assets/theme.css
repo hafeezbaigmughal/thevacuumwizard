@@ -3212,6 +3212,10 @@ ul {
 }
 
 .search-wrapper .search-icon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
   width: 44px;
   height: 44px;
   border: 0;
@@ -3249,10 +3253,15 @@ ul {
   background: #f11c2e;
 }
 
-@media (max-width: 479px) {
+@media (max-width: 600px) {
+  .search-wrapper.is-open {
+    left: 16px;
+    right: 16px;
+  }
+
   .search-wrapper.is-open .input-holder {
-    width: calc(100vw - 86px);
-    max-width: 340px;
+    width: 100%;
+    max-width: none;
   }
 }
 
