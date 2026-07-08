@@ -23,6 +23,21 @@ async function getJson(url) {
   return { data: await response.json(), headers: response.headers };
 }
 
+async function getText(url) {
+  const response = await fetch(url, {
+    headers: {
+      Accept: "text/html",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/138.0 Safari/537.36",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`${response.status} ${response.statusText}: ${url}`);
+  }
+
+  return response.text();
+}
+
 async function getAll(baseUrl, endpoint, params = {}) {
   const records = [];
   let page = 1;
@@ -47,6 +62,30 @@ async function save(name, value) {
   await writeFile(resolve(outputDir, `${name}.json`), `${JSON.stringify(value, null, 2)}\n`);
 }
 
+function htmlAttribute(tag, name) {
+  return tag.match(new RegExp(`\\b${name}=["']([^"']*)["']`, "i"))?.[1] || "";
+}
+
+async function getSeo(records) {
+  return Promise.all(records.map(async (record) => {
+    const html = await getText(record.link);
+    const metaTags = html.match(/<meta\b[^>]*>/gi) || [];
+    const links = html.match(/<link\b[^>]*>/gi) || [];
+    const description = metaTags.find((tag) => htmlAttribute(tag, "name").toLowerCase() === "description");
+    const canonical = links.find((tag) => htmlAttribute(tag, "rel").toLowerCase() === "canonical");
+
+    return {
+      id: record.id,
+      type: record.type,
+      slug: record.slug,
+      url: record.link,
+      title: html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1]?.trim() || "",
+      description: description ? htmlAttribute(description, "content") : "",
+      canonical: canonical ? htmlAttribute(canonical, "href") : "",
+    };
+  }));
+}
+
 await mkdir(outputDir, { recursive: true });
 
 const [
@@ -58,6 +97,7 @@ const [
   productCategories,
   productTags,
   media,
+  reviews,
 ] = await Promise.all([
   getAll(wpApi, "product", { _embed: "1", orderby: "id", order: "asc" }),
   getAll(wooApi, "products", { orderby: "id", order: "asc" }),
@@ -67,7 +107,10 @@ const [
   getAll(wpApi, "product_cat", { orderby: "id", order: "asc" }),
   getAll(wpApi, "product_tag", { orderby: "id", order: "asc" }),
   getAll(wpApi, "media", { orderby: "id", order: "asc" }),
+  getAll(wooApi, "products/reviews"),
 ]);
+
+const seo = await getSeo([...pages, ...articles, ...testimonials]);
 
 const wooById = new Map(wooProducts.map((product) => [product.id, product]));
 const products = wpProducts.map((product) => ({
@@ -87,6 +130,8 @@ const manifest = {
     productCategories: productCategories.length,
     productTags: productTags.length,
     media: media.length,
+    approvedProductReviews: reviews.length,
+    seoRecords: seo.length,
   },
 };
 
@@ -99,6 +144,8 @@ await Promise.all([
   save("product-categories", productCategories),
   save("product-tags", productTags),
   save("media", media),
+  save("product-reviews", reviews),
+  save("seo", seo),
 ]);
 
 console.log(JSON.stringify(manifest, null, 2));

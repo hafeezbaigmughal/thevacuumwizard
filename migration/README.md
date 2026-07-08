@@ -14,6 +14,19 @@ node migration/fetch-wordpress.mjs
 
 Generated source data is written to `migration/data/` and is excluded from Git.
 
+The verified source package contains:
+
+- 154 parent WooCommerce products and 8 variation rows in the complete CSV
+- 21 pages, 24 custom Articles, and 8 testimonials
+- 26 product categories and 36 product tags
+- 638 media records plus targeted WordPress XML exports
+- 39 menu items across 3 WordPress menus
+- SEO title, description, and canonical snapshots for 53 content URLs
+- 3 approved product reviews
+
+Orders, customers, unapproved comments, reviewer contact details, temporary
+login cookies, and WordPress admin nonces are deliberately excluded.
+
 ## Shopify access
 
 Create a store-owned app named `Vacuum Wizard Migration` in the Shopify Dev
