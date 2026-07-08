@@ -2,21 +2,112 @@
 {% assign first_word = title_words | first %}
 {% assign remaining_title = page.title | remove_first: first_word | strip %}
 
-<div class="innerBanner only_title page-title-banner">
-  <div class="banrcaptionBox">
-    <div class="wrapper">
-      <h1 class="title_center1">
-        <span>{{ first_word }}{% if remaining_title != blank %} <strong>{{ remaining_title }}</strong>{% endif %}</span>
-      </h1>
+{% if page.handle == 'about-us' %}
+  <div class="innerBanner about-page-banner">
+    <img src="{{ 'about-us-banner.png' | asset_url }}" width="1920" height="320" alt="About Us" loading="eager">
+    <div class="banrcaptionBox">
+      <div class="wrapper">
+        <h1 class="title_center1"><span>About <strong>Us</strong></span></h1>
+      </div>
     </div>
   </div>
-</div>
 
-<section class="about-us-middle-content page-content-template">
-  <div class="wrapper">
-    <div class="about-us-top defaulttemplate rte">{{ page.content }}</div>
+  <section class="about-us-middle-content about-page-template">
+    <div class="wrapper">
+      <div class="about-us-top">
+        <h1 class="title_center1"><span>Vacuum <strong>Wizard</strong></span></h1>
+        <p>The Vacuum Wizard are independent specialists in Dyson handheld vacuum cleaners &amp; spare parts, Based between Bristol &amp; Bath, this website list most if not all Dyson Spares required for the following handheld models. Dyson V6, Dyson V7, Dyson V8, Dyson V10, Dyson V11 and and the latest Dyson V15. If you are unsure of the part you need or cannot find it on our website, please feel free to <a href="{{ pages['contact-us'].url | default: '/pages/contact-us' }}">Contact us here</a> with your query and we will be happy to look into your request. We currently only stock and specialise in Dyson handhelds.</p>
+      </div>
+    </div>
+
+    <ul class="about-feature-list">
+      <li>
+        <div class="wrapper">
+          <div class="about-us-pic">
+            <img src="{{ 'about-why-us.png' | asset_url }}" width="500" height="500" alt="Why choose The Vacuum Wizard" loading="lazy">
+          </div>
+          <div class="about-us-text">
+            <h3><span>Why <strong>Us</strong></span></h3>
+            <p>The Vacuum Wizard are independent specialists in Dyson hand held vacuum cleaners &amp; spare parts, Based between Bristol &amp; Bath, this website list most if not all Dyson Spares required for the following hand held models. Dyson V6, Dyson V7, Dyson V8, Dyson V10, Dyson V11 and the latest Dyson V15. If you are unsure of the part you need or cannot find it on our website, please feel free to Contact us here with your query and we will be happy to look into your request. We currently only stock and specialise in Dyson handhelds.</p>
+            <p>The Vacuum Wizard also offer a repair and servicing service for our local customers. Most repairs and services available while you wait as we have large amounts of parts in stock.</p>
+            <p>Please always contact us prior to travelling to confirm service availability.</p>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <section class="service_bottom">
+    <div class="wrapper">
+      <div class="service_bottom_box">
+        <ul>
+          <li><a href="tel:03333701701"><span class="service-icon service-icon--phone" aria-hidden="true"></span><h3><span>Call us now </span>03333 701 701</h3></a></li>
+          <li><a href="mailto:info@thevacuumwizard.co.uk"><span class="service-icon service-icon--mail" aria-hidden="true"></span><h3><span></span>info@thevacuumwizard.co.uk</h3></a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="meet_team">
+    <div class="wrapper">
+      <h1 class="title_center1"><span>Meet <strong>Our Team</strong></span></h1>
+      <div class="team_details">
+        <div class="meet_team_pic">
+          <img src="{{ 'about-rebecca.jpeg' | asset_url }}" width="400" height="400" alt="Rebecca Gunter" loading="lazy">
+        </div>
+        <div class="meet_team_text">
+          <h3><span>Message from our Managing Director - Rebecca Gunter</span></h3>
+          <p>Hillside Commerce Limited have been working with Dyson products now for the past 7 years. We have a wealth of knowledge in Dyson products. We are an Independent Dyson specialists meaning we can buy from multi sources bringing you our customers the best possible prices and Service.</p>
+          <p>Our business is built on customer service and happy customers make us happy.</p>
+          <p>I am extremely proud of the brand and team we have grown into today, meet our team below.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="meet_team_middle">
+    <div class="wrapper">
+      <ul>
+        <li>
+          <div class="team_pic" style="background-image: url('https://thevacuumwizard.co.uk/wp-content/uploads/2020/05/11883992_10155849820545394_5433769273313863831_o-1.jpg');"></div>
+          <div class="meet-our-team-middle-box">
+            <h4>James Gunter</h4>
+            <h5>Sales Director</h5>
+            <p>James over sees the running of the business and deals with the purchasing and selling. He has extensive knowledge of online retail and has helped to bring our business to be very well respected online....</p>
+            <ul class="social-icons"><li><a href="https://www.facebook.com/dysonrepairsbristol" target="_blank" rel="noopener">f</a></li><li><a href="https://www.instagram.com/the.vacuumwizard/" target="_blank" rel="noopener">i</a></li><li><a href="https://twitter.com/" target="_blank" rel="noopener">t</a></li></ul>
+            <a href="mailto:james@thevacuumwizard.co.uk">james@thevacuumwizard.co.uk</a>
+          </div>
+        </li>
+        <li>
+          <div class="team_pic" style="background-image: url('https://thevacuumwizard.co.uk/wp-content/uploads/2020/05/vacuum_metteem1.jpg');"></div>
+          <div class="meet-our-team-middle-box">
+            <h4>Justin Lear</h4>
+            <h5>Technician Manger</h5>
+            <p>Justin is The Original Dyson Wizard. He has been with the company from the beginning and with his technical knowledge and knowhow he has helped bring the company to where we are today....</p>
+            <ul class="social-icons"><li><a href="https://www.facebook.com/dysonrepairsbristol" target="_blank" rel="noopener">f</a></li><li><a href="https://www.instagram.com/the.vacuumwizard/" target="_blank" rel="noopener">i</a></li><li><a href="https://twitter.com/" target="_blank" rel="noopener">t</a></li></ul>
+            <a href="mailto:Justin@thevacuumwizard.co.uk">Justin@thevacuumwizard.co.uk</a>
+          </div>
+        </li>
+      </ul>
+    </div>
   </div>
-</section>
+{% else %}
+  <div class="innerBanner only_title page-title-banner">
+    <div class="banrcaptionBox">
+      <div class="wrapper">
+        <h1 class="title_center1">
+          <span>{{ first_word }}{% if remaining_title != blank %} <strong>{{ remaining_title }}</strong>{% endif %}</span>
+        </h1>
+      </div>
+    </div>
+  </div>
+
+  <section class="about-us-middle-content page-content-template">
+    <div class="wrapper">
+      <div class="about-us-top defaulttemplate rte">{{ page.content }}</div>
+    </div>
+  </section>
+{% endif %}
 
 {% schema %}
 {

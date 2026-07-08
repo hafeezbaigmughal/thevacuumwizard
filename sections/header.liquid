@@ -11,22 +11,24 @@
       <ul class="accountLinkBox">
         {% if shop.customer_accounts_enabled %}
           {% if customer %}
-            <li><a href="{{ routes.account_url }}"><span>My account</span></a></li>
-            <li><a href="{{ routes.account_logout_url }}"><span>Log out</span></a></li>
+            <li><a href="{{ routes.account_url }}"><span class="topbar-icon topbar-icon--account" aria-hidden="true"></span><span>My Account</span></a></li>
+            <li><a href="{{ routes.account_logout_url }}"><span class="topbar-icon topbar-icon--logout" aria-hidden="true"></span><span>Log Out</span></a></li>
           {% else %}
-            <li><a href="{{ routes.account_login_url }}"><span>Log in</span></a></li>
-            <li><a href="{{ routes.account_register_url }}"><span>Register</span></a></li>
+            <li><a href="{{ routes.account_url }}"><span class="topbar-icon topbar-icon--account" aria-hidden="true"></span><span>My Account</span></a></li>
+            <li><a href="{{ routes.account_register_url }}"><span class="topbar-icon topbar-icon--register" aria-hidden="true"></span><span>Register</span></a></li>
           {% endif %}
         {% endif %}
-        {% if section.settings.wishlist_page != blank %}
-          <li><a href="{{ section.settings.wishlist_page.url }}"><span>{{ section.settings.wishlist_label }}</span></a></li>
-        {% endif %}
+        {% assign wishlist_url = section.settings.wishlist_page.url | default: '/pages/wishlist' %}
+        <li><a href="{{ wishlist_url }}"><span class="topbar-icon topbar-icon--wishlist" aria-hidden="true"></span><span>{{ section.settings.wishlist_label }}</span></a></li>
         <li>
           <a class="cart-contents" href="{{ routes.cart_url }}" title="View your shopping cart">
+            <span class="topbar-icon topbar-icon--cart" aria-hidden="true"></span>
             <span>Cart</span>
-            <div class="ajaxloadrefresh">
-              <strong>{{ cart.total_price | money }} ({{ cart.item_count }})</strong>
-            </div>
+          </a>
+        </li>
+        <li>
+          <a class="cart-contents cart-amount" href="{{ routes.cart_url }}" title="View your shopping cart">
+            <span class="ajaxloadrefresh"><strong>{{ cart.total_price | money }} ({{ cart.item_count }})</strong></span>
           </a>
         </li>
       </ul>

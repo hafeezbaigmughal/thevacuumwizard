@@ -1,34 +1,44 @@
-<section class="page-width template-section contact-page">
-  <header class="template-heading">
-    <h1>{{ page.title }}</h1>
-    {% if page.content != blank %}<div class="rte">{{ page.content }}</div>{% endif %}
-  </header>
+<div class="innerBanner contact-page-banner">
+  <img src="{{ 'contact-banner.jpg' | asset_url }}" width="1600" height="456" alt="Contact Us" loading="eager">
+  <div class="banrcaptionBox">
+    <div class="wrapper">
+      <h1 class="title_center1"><span>Contact <strong>Us</strong></span></h1>
+    </div>
+  </div>
+</div>
 
-  {% form 'contact', class: 'contact-form' %}
-    {% if form.posted_successfully? %}<p class="form-status" tabindex="-1">Thank you. We will get back to you shortly.</p>{% endif %}
-    {{ form.errors | default_errors }}
-    <div class="form-grid">
-      <div>
-        <label for="ContactName">Name</label>
-        <input id="ContactName" type="text" name="contact[name]" value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}" autocomplete="name">
+<section class="getinTouch-sec contact-page-template">
+  <div class="wrapper">
+    <div class="getinTouchBox">
+      <div class="contact_form">
+        <h1 class="title_center1"><span>Get <strong>In Touch</strong></span></h1>
+
+        {% form 'contact', class: 'contact-form' %}
+          {% if form.posted_successfully? %}<p class="form-status" tabindex="-1">Thank you. We will get back to you shortly.</p>{% endif %}
+          {{ form.errors | default_errors }}
+          <input id="ContactName" type="text" name="contact[name]" value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}" autocomplete="name" placeholder="Name*" required>
+          <input id="ContactEmail" type="email" name="contact[email]" value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}" autocomplete="email" placeholder="Email Address*" required>
+          <textarea id="ContactBody" name="contact[body]" rows="10" placeholder="Message" required>{{ form.body }}</textarea>
+          <button type="submit">Send</button>
+        {% endform %}
       </div>
-      <div>
-        <label for="ContactEmail">Email <span aria-hidden="true">*</span></label>
-        <input id="ContactEmail" type="email" name="contact[email]" value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}" autocomplete="email" required>
-      </div>
-      <div>
-        <label for="ContactPhone">Phone</label>
-        <input id="ContactPhone" type="tel" name="contact[phone]" value="{{ form.phone }}" autocomplete="tel">
-      </div>
-      <div>
-        <label for="ContactSubject">Subject</label>
-        <input id="ContactSubject" type="text" name="contact[subject]" value="{{ form.subject }}">
+
+      <div class="contact_info">
+        <h4>
+          The Vacuum Wizard
+          <span>Registration No: 10057594</span>
+        </h4>
+        <p><span class="contact-info-icon contact-info-icon--map" aria-hidden="true"></span>Trident Works, Marsh Lane, Temple Cloud, Bristol BS39 5AZ</p>
+        <a href="tel:03333701701"><span class="contact-info-icon contact-info-icon--phone" aria-hidden="true"></span>03333 701 701</a>
+        <a href="mailto:info@thevacuumwizard.co.uk"><span class="contact-info-icon contact-info-icon--mail" aria-hidden="true"></span>info@thevacuumwizard.co.uk</a>
+        <a href="mailto:sales@thevacuumwizard.co.uk"><span class="contact-info-icon contact-info-icon--web" aria-hidden="true"></span>sales@thevacuumwizard.co.uk</a>
       </div>
     </div>
-    <label for="ContactBody">Message <span aria-hidden="true">*</span></label>
-    <textarea id="ContactBody" name="contact[body]" rows="8" required>{{ form.body }}</textarea>
-    <button class="button button--red" type="submit">Send message</button>
-  {% endform %}
+  </div>
+</section>
+
+<section class="map contact-map">
+  <iframe title="The Vacuum Wizard location" src="https://www.google.com/maps?q=Trident%20Works%2C%20Marsh%20Lane%2C%20Temple%20Cloud%2C%20Bristol%20BS39%205AZ&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
 </section>
 
 {% schema %}
