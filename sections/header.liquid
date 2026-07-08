@@ -85,12 +85,21 @@
       </nav>
     </div>
 
-    <form action="{{ routes.search_url }}" method="get" role="search">
-      <div class="search-wrapper">
+    <form action="{{ routes.search_url }}" method="get" role="search" class="header-search-form" data-header-search-form>
+      <div class="search-wrapper" data-header-search>
         <div class="input-holder">
           <label class="visually-hidden" for="HeaderSearch">Search the store</label>
           <input id="HeaderSearch" type="search" class="search-input" placeholder="Search products" name="q" value="{{ search.terms | escape }}" autocomplete="off">
-          <button class="search-icon" type="submit" aria-label="Search"><span></span></button>
+          <button
+            class="search-icon"
+            type="submit"
+            aria-label="Open search"
+            aria-controls="HeaderSearch"
+            aria-expanded="false"
+            data-header-search-button
+          >
+            <span aria-hidden="true"></span>
+          </button>
         </div>
       </div>
     </form>

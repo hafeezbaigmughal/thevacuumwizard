@@ -24,6 +24,52 @@ function initializeHeader(root = document) {
       toggle.setAttribute('aria-expanded', String(isOpen));
     });
   });
+
+  queryAll(root, '[data-header-search-form]:not([data-initialized])').forEach((form) => {
+    form.dataset.initialized = 'true';
+    const search = form.querySelector('[data-header-search]');
+    const input = form.querySelector('.search-input');
+    const button = form.querySelector('[data-header-search-button]');
+    if (!search || !input || !button) return;
+
+    const openSearch = () => {
+      search.classList.add('is-open');
+      button.setAttribute('aria-expanded', 'true');
+      button.setAttribute('aria-label', 'Search');
+      window.requestAnimationFrame(() => input.focus());
+    };
+
+    const closeSearch = () => {
+      search.classList.remove('is-open');
+      button.setAttribute('aria-expanded', 'false');
+      button.setAttribute('aria-label', 'Open search');
+    };
+
+    button.addEventListener('click', (event) => {
+      if (!search.classList.contains('is-open') || input.value.trim() === '') {
+        event.preventDefault();
+        openSearch();
+      }
+    });
+
+    form.addEventListener('submit', (event) => {
+      input.value = input.value.trim();
+      if (input.value === '') {
+        event.preventDefault();
+        openSearch();
+      }
+    });
+
+    document.addEventListener('click', (event) => {
+      if (search.classList.contains('is-open') && !form.contains(event.target)) closeSearch();
+    });
+
+    form.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      closeSearch();
+      button.focus();
+    });
+  });
 }
 
 function initializeProductGallery(root = document) {
