@@ -60,6 +60,30 @@
             "title": "Dyson V11",
             "collection": "dysonv11"
           }
+        },
+        "model_HBbJAj": {
+          "type": "model",
+          "settings": {
+            "title": "Dyson V12",
+            "image": "shopify://shop_images/ChatGPT_Image_Aug_13_2026_10_47_52_AM.png",
+            "collection": ""
+          }
+        },
+        "model_JUhfNK": {
+          "type": "model",
+          "settings": {
+            "title": "Dyson V15",
+            "image": "shopify://shop_images/ChatGPT_Image_Aug_13_2026_10_54_03_AM.png",
+            "collection": "dysonv15"
+          }
+        },
+        "model_prWyRR": {
+          "type": "model",
+          "settings": {
+            "title": "Dyson V16",
+            "image": "shopify://shop_images/ChatGPT_Image_Aug_13_2026_11_01_39_AM.png",
+            "collection": "dyson-v16"
+          }
         }
       },
       "block_order": [
@@ -67,7 +91,10 @@
         "model_v7",
         "model_v8",
         "model_v10",
-        "model_v11"
+        "model_v11",
+        "model_HBbJAj",
+        "model_JUhfNK",
+        "model_prWyRR"
       ],
       "settings": {
         "heading": "Choose Your Model Below For Spare Parts",
