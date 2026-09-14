@@ -108,7 +108,7 @@
           "type": "benefit",
           "settings": {
             "heading": "Express UK Delivery",
-            "text": "On all orders only GBP 4.99"
+            "text": "On all orders only £5.99"
           }
         },
         "stock": {
@@ -172,7 +172,7 @@
     "shipping": {
       "type": "home-shipping",
       "settings": {
-        "heading": "Next Working Day Shipping On All Orders Only GBP 4.99",
+        "heading": "Next Working Day Shipping On All Orders Only £5.99",
         "primary_label": "Shop now",
         "primary_link": "/collections/all",
         "secondary_label": "Contact us",
