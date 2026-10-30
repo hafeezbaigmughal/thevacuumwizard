@@ -66,16 +66,9 @@
     <div class="footer_middl">
       <div class="wrapper">
         <ul>
-          {% assign footer_bottom_menu = linklists[section.settings.footer_bottom_menu] %}
-          {% if section.settings.footer_bottom_menu != blank and footer_bottom_menu.links.size > 0 %}
-            {% for link in footer_bottom_menu.links %}
-              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
-            {% endfor %}
-          {% else %}
-            {% for policy in shop.policies %}
-              {% if policy != blank %}<li><a href="{{ policy.url }}">{{ policy.title }}</a></li>{% endif %}
-            {% endfor %}
-          {% endif %}
+          {% for policy in shop.policies %}
+            {% if policy != blank %}<li><a href="{{ policy.url }}">{{ policy.title }}</a></li>{% endif %}
+          {% endfor %}
         </ul>
       </div>
     </div>
@@ -83,7 +76,7 @@
 
   <div class="footer_btm">
     <div class="wrapper">
-      <p>The Vacuum Wizard is a Trading Name Of Bristolian Commerce Limited.<span>Registered in the UK</span></p>
+      <p>The vacuum Wizard is a trading name of Hillside Commerce Limited</span></p>
       <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name | default: 'The Vacuum Wizard' }}</p>
       <p>Registration No: {{ section.settings.registration_number }}<span>VAT Number: {{ section.settings.vat_number }}</span></p>
     </div>
@@ -97,14 +90,7 @@
     {
       "type": "link_list",
       "id": "footer_menu",
-      "label": "Footer menu",
-      "default": "useful-links"
-    },
-    {
-      "type": "link_list",
-      "id": "footer_bottom_menu",
-      "label": "Footer bottom menu",
-      "default": "footer-bottom-menu"
+      "label": "Footer menu"
     },
     {
       "type": "image_picker",
