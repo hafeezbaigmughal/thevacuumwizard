@@ -12,7 +12,6 @@
     "main": {
       "type": "main-collection",
       "settings": {
-        "banner_image": "shopify://shop_images/dyson-v10-genuine-replacement-main-body-and-cyclone-in-red-969596-07_2.jpg",
         "intro_heading": "",
         "products_per_page": 15,
         "show_sidebar": true,
