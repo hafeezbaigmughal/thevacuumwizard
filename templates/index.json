@@ -61,6 +61,7 @@
           "type": "model",
           "settings": {
             "title": "Dyson V11",
+            "image": "shopify://shop_images/V11_dyosn.jpg",
             "collection": "dysonv11"
           }
         },
