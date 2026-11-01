@@ -67,6 +67,7 @@
         },
         "model_HBbJAj": {
           "type": "model",
+          "disabled": true,
           "settings": {
             "title": "Dyson V12",
             "image": "shopify://shop_images/ChatGPT_Image_Aug_13_2026_10_47_52_AM.png",
