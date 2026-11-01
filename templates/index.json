@@ -45,6 +45,7 @@
           "type": "model",
           "settings": {
             "title": "Dyson V8",
+            "image": "shopify://shop_images/V8_dyson.jpg",
             "collection": "dysonv8"
           }
         },
