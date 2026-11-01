@@ -41,6 +41,13 @@
         }
       }
     },
-    "content_for_index": []
+    "content_for_index": [],
+    "blocks": {
+      "consentmo-gdpr-4fbe573f-a377-4fea-9801-3ee0858cae41": {
+        "type": "shopify://apps/consentmo-gdpr/blocks/gdpr_cookie_consent/4fbe573f-a377-4fea-9801-3ee0858cae41",
+        "disabled": false,
+        "settings": {}
+      }
+    }
   }
 }
