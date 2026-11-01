@@ -37,6 +37,7 @@
           "type": "model",
           "settings": {
             "title": "Dyson V7",
+            "image": "shopify://shop_images/V7_dyson.jpg",
             "collection": "dysonv7"
           }
         },
@@ -51,6 +52,7 @@
           "type": "model",
           "settings": {
             "title": "Dyson V10",
+            "image": "shopify://shop_images/V10_banner_image.jpg",
             "collection": "dysonv10"
           }
         },
