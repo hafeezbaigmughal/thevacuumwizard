@@ -5895,3 +5895,5 @@ ul {
 .add_waslist .add_to_cart_button { width: auto !important; min-width: 0 !important; height: 36px !important; padding: 0 16px !important; border-radius: 18px !important; font-size: 13px; font-weight: 600; line-height: 1; white-space: nowrap; background: #f11c2e !important; color: #fff !important; }
 .add_waslist a.add_to_cart_button { background: #9d9d9d !important; }
 .add_waslist .add_to_cart_button:hover { opacity: 0.9; }
+.why_choose_us_pic { width: 90px; height: 70px; background: url(home-shipping-box.png) no-repeat center / contain; }
+.why_choose_us_pic::before { content: none; }
