@@ -5891,3 +5891,7 @@ ul {
   #header .menu-item-has-children > .sub-menu { display: none; }
   #header .menu-item-has-children.submenu-is-open > .sub-menu { display: block; }
 }
+
+.add_waslist .add_to_cart_button { width: auto !important; min-width: 0 !important; height: 36px !important; padding: 0 16px !important; border-radius: 18px !important; font-size: 13px; font-weight: 600; line-height: 1; white-space: nowrap; background: #f11c2e !important; color: #fff !important; }
+.add_waslist a.add_to_cart_button { background: #9d9d9d !important; }
+.add_waslist .add_to_cart_button:hover { opacity: 0.9; }
